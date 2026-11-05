@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 150 200" role="img" aria-label="ילד עם תיק גב">
+  <ellipse cx="75" cy="192" rx="46" ry="6" fill="#1F5B9E" opacity=".12"/>
+  <rect x="38" y="84" width="74" height="70" rx="22" fill="#5ACD81"/>
+  <rect x="48" y="118" width="54" height="26" rx="10" fill="#46B96B"/>
+  <rect x="52" y="148" width="19" height="38" rx="8" fill="#2F4A6E"/>
+  <rect x="79" y="148" width="19" height="38" rx="8" fill="#2F4A6E"/>
+  <rect x="48" y="180" width="26" height="12" rx="6" fill="#FF7F32"/>
+  <rect x="76" y="180" width="26" height="12" rx="6" fill="#FF7F32"/>
+  <rect x="46" y="84" width="58" height="68" rx="22" fill="#2F78C4"/>
+  <rect x="58" y="84" width="8" height="64" rx="4" fill="#46B96B"/>
+  <rect x="84" y="84" width="8" height="64" rx="4" fill="#46B96B"/>
+  <rect x="26" y="92" width="18" height="46" rx="9" fill="#2F78C4"/>
+  <circle cx="35" cy="140" r="9" fill="#F6C9A0"/>
+  <g transform="rotate(-28 112 96)"><rect x="104" y="40" width="18" height="58" rx="9" fill="#2F78C4"/><circle cx="113" cy="40" r="10" fill="#F6C9A0"/></g>
+  <rect x="67" y="70" width="16" height="18" rx="7" fill="#E9B88F"/>
+  <circle cx="75" cy="52" r="29" fill="#F6C9A0"/>
+  <path d="M46 50Q42 20 75 20Q108 20 104 50Q98 34 78 34Q58 34 46 50Z" fill="#5A3A22"/>
+  <circle cx="64" cy="55" r="3.2" fill="#2B1B12"/>
+  <circle cx="86" cy="55" r="3.2" fill="#2B1B12"/>
+  <circle cx="58" cy="64" r="5" fill="#F29A7A" opacity=".5"/>
+  <circle cx="92" cy="64" r="5" fill="#F29A7A" opacity=".5"/>
+  <path d="M64 66Q75 78 86 66Z" fill="#fff" stroke="#8A3F2A" stroke-width="2" stroke-linejoin="round"/>
+</svg>

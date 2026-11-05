@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 130" role="img" aria-label="SafeRide">
+  <g stroke="#FFC633" stroke-width="5" stroke-linecap="round" fill="none"><path d="M168 22l9-11"/><path d="M180 38l13-4"/><path d="M158 12l3-12"/></g>
+  <path d="M40 66Q48 16 100 14Q152 16 160 66Z" fill="#2F78C4"/>
+  <path d="M51 64Q57 26 100 24Q143 26 149 64Z" fill="#DCEBFA"/>
+  <g><circle cx="72" cy="50" r="13" fill="#F6C9A0"/><path d="M59 48Q60 35 72 35Q84 35 85 48Q78 42 72 42Q65 42 59 48Z" fill="#5A3A22"/><circle cx="68" cy="51" r="1.6" fill="#2B1B12"/><circle cx="76" cy="51" r="1.6" fill="#2B1B12"/></g>
+  <g><circle cx="100" cy="46" r="13" fill="#E3A67A"/><path d="M87 44Q87 31 100 31Q113 31 113 44Q106 38 100 38Q93 38 87 44Z" fill="#2B1B12"/><circle cx="96" cy="47" r="1.6" fill="#2B1B12"/><circle cx="104" cy="47" r="1.6" fill="#2B1B12"/></g>
+  <g><circle cx="128" cy="50" r="13" fill="#F6C9A0"/><path d="M115 50Q113 33 128 35Q143 33 141 50Q138 40 128 40Q119 40 115 50Z" fill="#C9702E"/><circle cx="124" cy="51" r="1.6" fill="#2B1B12"/><circle cx="132" cy="51" r="1.6" fill="#2B1B12"/></g>
+  <rect x="12" y="58" width="176" height="46" rx="19" fill="#1F5B9E"/>
+  <rect x="12" y="58" width="176" height="10" rx="5" fill="#2F78C4"/>
+  <circle cx="36" cy="82" r="8" fill="#FFC633"/><circle cx="164" cy="82" r="8" fill="#FFC633"/>
+  <rect x="74" y="84" width="52" height="11" rx="5.5" fill="#16406F"/>
+  <circle cx="52" cy="106" r="16" fill="#16406F"/><circle cx="52" cy="106" r="7" fill="#C9D6E4"/>
+  <circle cx="148" cy="106" r="16" fill="#16406F"/><circle cx="148" cy="106" r="7" fill="#C9D6E4"/>
+</svg>

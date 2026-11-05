@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 190" role="img" aria-label="מנהל מערכת עם מחשב נייד">
+  <path d="M0 160Q60 132 130 152T240 146V190H0Z" fill="#CFEBD8"/>
+  <g><rect x="14" y="88" width="8" height="46" rx="4" fill="#8A5A36"/><circle cx="18" cy="76" r="24" fill="#5ACD81"/></g>
+  <g><rect x="214" y="104" width="7" height="34" rx="3" fill="#8A5A36"/><circle cx="217" cy="96" r="18" fill="#6FD494"/></g>
+  <rect x="50" y="84" width="68" height="96" rx="26" fill="#2F78C4"/>
+  <rect x="75" y="70" width="16" height="18" rx="7" fill="#E9B88F"/>
+  <circle cx="83" cy="56" r="26" fill="#F6C9A0"/>
+  <path d="M57 54Q54 26 83 26Q112 26 109 54Q102 40 84 40Q66 40 57 54Z" fill="#5A3A22"/>
+  <circle cx="73" cy="60" r="3" fill="#2B1B12"/>
+  <circle cx="93" cy="60" r="3" fill="#2B1B12"/>
+  <path d="M73 71Q83 80 93 71Z" fill="#fff" stroke="#8A3F2A" stroke-width="2" stroke-linejoin="round"/>
+  <rect x="62" y="116" width="16" height="36" rx="8" fill="#2F78C4" transform="rotate(32 70 134)"/>
+  <path d="M104 98L196 98L206 150L94 150Z" fill="#46526B"/>
+  <path d="M110 104L192 104L199 144L102 144Z" fill="#DCEBFA"/>
+  <g transform="translate(151 124)"><rect x="-16" y="-4" width="32" height="12" rx="6" fill="#1F5B9E"/><path d="M-10 -4Q-6 -14 0 -14Q6 -14 10 -4Z" fill="#2F78C4"/><circle cx="-8" cy="9" r="4" fill="#16406F"/><circle cx="8" cy="9" r="4" fill="#16406F"/></g>
+  <path d="M88 150H212L216 160H84Z" fill="#6B7894"/>
+  <circle cx="108" cy="148" r="9" fill="#F6C9A0"/>
+</svg>

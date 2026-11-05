@@ -1,0 +1,1185 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>SafeRide אבטיפוס</title>
+<meta name="theme-color" content="#1F5B9E">
+<meta name="description" content="אבטיפוס SafeRide: הסעות קהילתיות לחוגים. נתוני דמה בלבד.">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="SafeRide">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/svg+xml" href="assets/logo-mark.svg">
+<link rel="apple-touch-icon" href="assets/icon-180.png">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;700;800&display=swap">
+<style>
+/* SafeRide prototype v2 — follows SafeRide_Design_System_.md v1.3 and the /inspiration boards.
+   Layout: phone-width column centred on the page, slim test bar on top (role, clock, reset). */
+:root{
+  /* brand tokens (Design System §2) */
+  --primary:#1F5B9E; --primary-d:#174A82; --primary-t:#E4EEF9;
+  --green:#5ACD81; --green-ink:#17402A; --green-d:#1E7A47; --green-t:#E3F6EA;
+  --yellow:#FFC633; --yellow-ink:#3A2B00; --yellow-d:#7A5200; --yellow-t:#FFF5D6;
+  --orange:#FF7F32; --orange-ink:#3B1A00; --orange-d:#B34A0A; --orange-t:#FFEBDD;
+  --red:#D64545; --red-d:#A62E2E; --red-t:#FCE8E8;
+  --violet-d:#5B43B0; --violet-t:#EDE8FB;
+  --ink:#333333; --ink2:#64748B; --line:#DDE6EF; --app:#F7F9FC; --card:#FFFFFF;
+  --shadow:0 4px 14px rgba(31,91,158,.10);
+  --r:16px; --bar:#10253C;
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:#E7EEF7;color:var(--ink);font-family:'Heebo',system-ui,sans-serif;font-size:15px;line-height:1.4}
+button{font-family:inherit;cursor:pointer;color:inherit}
+button:disabled{cursor:not-allowed}
+input,select,textarea{font-family:inherit}
+:focus-visible{outline:3px solid color-mix(in srgb,var(--primary) 55%,transparent);outline-offset:2px}
+.ic{width:1.25em;height:1.25em;flex:none;vertical-align:middle}
+.testbar{background:var(--bar);color:#fff;padding:8px 14px;display:flex;flex-wrap:wrap;gap:6px 12px;align-items:center;font-size:12.5px;position:relative;z-index:50}
+.testbar b{font-weight:800}
+.testbar.slim{flex-wrap:nowrap;gap:8px}.testbar.slim .tbrole{opacity:.85;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.testbar.slim button,.testbar button[data-a]{white-space:nowrap}
+html{-webkit-text-size-adjust:100%}
+body{-webkit-tap-highlight-color:transparent}
+button,a,select,.card{touch-action:manipulation}
+@media (max-width:480px){
+ body{background:var(--app)}
+ .shell{box-shadow:none;min-height:calc(100dvh - 48px)}
+ .screen{min-height:calc(100dvh - 48px)}
+ input,select,textarea,.in,.testbar select{font-size:16px}
+ .testbar{padding:8px 12px}
+ .testbar select{height:38px}
+}.testbar label{display:flex;align-items:center;gap:6px;min-width:0}
+.testbar select{background:#1D3A57;color:#fff;border:1px solid #35567A;border-radius:10px;height:32px;padding:0 8px;font:500 12.5px 'Heebo',sans-serif;max-width:100%}
+.testbar button{background:transparent;color:#fff;border:1px solid #35567A;border-radius:10px;height:32px;padding:0 12px;font:700 12.5px 'Heebo',sans-serif}
+.shell{max-width:440px;margin:0 auto;min-height:calc(100vh - 48px);background:var(--app);box-shadow:0 0 40px rgba(16,37,60,.12);position:relative}
+.screen{padding-bottom:92px;min-height:calc(100vh - 48px);display:flex;flex-direction:column}
+/* top bar */
+.top{background:var(--primary);color:#fff;height:58px;display:flex;align-items:center;gap:4px;padding:0 6px;position:sticky;top:0;z-index:15}
+.top h1{flex:1;margin:0;text-align:center;font-size:19px;font-weight:800;letter-spacing:.1px}
+.ib{width:44px;height:44px;border:0;background:transparent;color:#fff;display:flex;align-items:center;justify-content:center;border-radius:12px;position:relative}
+.ib.sp0{visibility:hidden}
+.ib .badge{position:absolute;top:6px;left:6px}
+.badge{min-width:18px;height:18px;border-radius:99px;background:var(--orange);color:var(--orange-ink);font-size:11px;font-weight:800;display:flex;align-items:center;justify-content:center;padding:0 4px}
+.logo{direction:ltr;font-weight:800;letter-spacing:-.6px;font-size:22px;display:inline-flex;align-items:center;gap:6px}
+.top .logo i{font-style:normal;color:#fff}.top .logo u{text-decoration:none;color:#8EE5AB}
+.logo i{font-style:normal;color:var(--primary)}.logo u{text-decoration:none;color:var(--green-d)}
+.page{background:linear-gradient(180deg,#E6F0FB 0,var(--app) 240px);flex:1;padding-bottom:12px}
+.greet{padding:16px 18px 6px}
+.greet h2{margin:0;font-size:25px;font-weight:800;color:var(--primary);line-height:1.15}
+.greet p{margin:2px 0 0;color:var(--ink2);font-size:14px}
+.pad{padding:8px 16px;display:flex;flex-direction:column;gap:12px}
+.row{display:flex;align-items:center;gap:10px}.sp{justify-content:space-between}.wrap{flex-wrap:wrap}
+.grow{flex:1;min-width:0}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:14px;box-shadow:var(--shadow);display:flex;flex-direction:column;gap:10px}
+.card.flat{box-shadow:none}
+.card.tint-green{background:var(--green-t);border-color:#BFE8CE}
+.card.tint-orange{background:var(--orange-t);border-color:#FFD2B3}
+.card.tint-blue{background:var(--primary-t);border-color:#C9DDF3}
+.card.tint-yellow{background:var(--yellow-t);border-color:#F6DE96}
+button.card{text-align:right;font:inherit;width:100%}
+.h2{margin:0;font-size:17px;font-weight:800;color:var(--primary)}
+.small{font-size:12.5px;color:var(--ink2)}
+.tag{font-size:13px;color:var(--ink2)}
+.note{display:flex;gap:8px;align-items:flex-start;background:var(--primary-t);color:var(--primary-d);border-radius:12px;padding:10px 12px;font-size:13px;font-weight:500}
+/* chips (state is always icon + word, never colour alone) */
+.chip{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:99px;font-size:12.5px;font-weight:700;white-space:nowrap}
+.chip .ic{width:14px;height:14px}
+.c-green{background:var(--green-t);color:var(--green-d)}.c-blue{background:var(--primary-t);color:var(--primary-d)}
+.c-yellow{background:var(--yellow-t);color:var(--yellow-d)}.c-gray{background:#EAEFF4;color:#475569}
+.c-red{background:var(--red-t);color:var(--red-d)}.c-orange{background:var(--orange-t);color:var(--orange-d)}
+.d-to{background:var(--green-t);color:var(--green-d)}.d-from{background:var(--orange-t);color:var(--orange-d)}
+/* avatars + activity tiles */
+.av{width:44px;height:44px;flex:none;border-radius:99px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:15px;background:var(--primary-t);color:var(--primary)}
+.av.v{box-shadow:0 0 0 3px var(--green)}.av.g{background:var(--green-t);color:var(--green-d)}.av.y{background:var(--yellow-t);color:var(--yellow-d)}.av.o{background:var(--orange-t);color:var(--orange-d)}
+.av.lg{width:56px;height:56px;font-size:18px}.av.sm{width:36px;height:36px;font-size:13px}
+.at{width:46px;height:46px;flex:none;border-radius:14px;display:flex;align-items:center;justify-content:center}
+.at .ic{width:26px;height:26px}
+.t-orange{background:var(--orange-t);color:var(--orange-d)}.t-blue{background:var(--primary-t);color:var(--primary)}
+.t-violet{background:var(--violet-t);color:var(--violet-d)}.t-green{background:var(--green-t);color:var(--green-d)}
+/* seat meter  3/4 + person icons */
+.meter{display:inline-flex;align-items:center;gap:6px;font-weight:700;font-size:13px}
+.meter .ppl{display:inline-flex;gap:1px}
+.meter .ppl .ic{width:15px;height:15px;color:#C5D0DD}.meter .ppl .on{color:var(--green-d)}
+/* buttons */
+.btn{min-height:48px;border:0;border-radius:14px;font-weight:800;font-size:16px;width:100%;display:flex;align-items:center;justify-content:center;gap:8px;padding:0 14px}
+.btn.sm{min-height:44px;font-size:15px;border-radius:12px}
+.btn.primary{background:var(--primary);color:#fff}
+.btn.ok{background:var(--green);color:var(--green-ink)}
+.btn.action{background:var(--orange);color:var(--orange-ink)}
+.btn.warn{background:var(--yellow);color:var(--yellow-ink)}
+.btn.rej{background:#fff;color:var(--red-d);border:1.5px solid var(--red)}
+.btn.line{background:#fff;color:var(--primary);border:1.5px solid var(--primary)}
+.btn.soft{background:#EAEFF4;color:var(--ink)}
+.btn.danger{background:var(--red);color:#fff}
+.btn:disabled{background:#E6EBF1;color:#8693A3;border-color:transparent;box-shadow:none}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+/* stat tiles */
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.stat{border-radius:var(--r);padding:12px 8px;text-align:center;border:1px solid transparent;display:flex;flex-direction:column;align-items:center;gap:2px;font:inherit}
+.stat .ic{width:26px;height:26px}
+.stat b{font-size:28px;font-weight:800;line-height:1.1}
+.stat span{font-size:13px;color:#475569;font-weight:500}
+button.stat{cursor:pointer}
+.s-blue{background:var(--primary-t);color:var(--primary)}.s-green{background:var(--green-t);color:var(--green-d)}
+.s-orange{background:var(--orange-t);color:var(--orange-d)}.s-violet{background:var(--violet-t);color:var(--violet-d)}
+.s-red{background:var(--red-t);color:var(--red-d)}.s-yellow{background:var(--yellow-t);color:var(--yellow-d)}
+/* direction tiles */
+.dtile{background:#fff;border:1px solid var(--line);border-radius:14px;padding:10px;display:flex;flex-direction:column;gap:6px;min-width:0}
+.dtile.to{border-top:4px solid var(--green)}.dtile.from{border-top:4px solid var(--orange)}
+.dtile b.t{font-size:22px;font-weight:800;line-height:1}
+/* forms */
+.field{display:flex;flex-direction:column;gap:5px}
+.field>label,.lbl{font-size:13.5px;font-weight:700;display:flex;align-items:center;gap:6px;color:var(--ink)}
+.lbl .ic{color:var(--primary);width:18px;height:18px}.req{color:var(--red-d)}
+.in{height:46px;border:1.5px solid #9DB0C5;border-radius:12px;padding:0 12px;font:500 15px 'Heebo',sans-serif;background:#fff;color:var(--ink);width:100%}
+.in.bad{border-color:var(--red)}
+textarea.in{height:auto;padding:10px 12px;line-height:1.5;resize:vertical}
+.err{color:var(--red-d);font-size:12.5px;font-weight:700;display:flex;gap:4px;align-items:center}
+.seg{display:flex;background:#EAEFF4;border-radius:12px;padding:3px;gap:3px}
+.seg button{flex:1;border:0;background:transparent;border-radius:10px;min-height:40px;font-weight:700;font-size:14px;color:#475569;display:flex;align-items:center;justify-content:center;gap:5px}
+.seg button.on{background:var(--primary);color:#fff}
+.seg button.on.g{background:var(--green);color:var(--green-ink)}.seg button.on.o{background:var(--orange);color:var(--orange-ink)}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.pill{border:1.5px solid #9DB0C5;background:#fff;border-radius:99px;min-height:40px;padding:0 14px;font-weight:700;font-size:14px;display:inline-flex;align-items:center;gap:5px}
+.pill.on{background:var(--primary-t);border-color:var(--primary);color:var(--primary-d)}
+.stepper{display:flex;align-items:center;gap:10px}
+.stepper button{width:44px;height:44px;border-radius:12px;border:1.5px solid var(--primary);background:#fff;color:var(--primary);display:flex;align-items:center;justify-content:center}
+.stepper b{font-size:22px;min-width:32px;text-align:center}
+.search{position:relative}
+.search .ic{position:absolute;top:13px;right:12px;color:var(--ink2)}
+.search .in{padding-right:40px}
+/* nav */
+.nav{position:fixed;bottom:0;right:0;left:0;z-index:20;pointer-events:none}
+.nav>div{pointer-events:auto;max-width:440px;margin:0 auto;height:calc(68px + env(safe-area-inset-bottom,0px));padding-bottom:env(safe-area-inset-bottom,0px);display:flex;background:#fff;border-top:1px solid var(--line);box-shadow:0 -4px 16px rgba(31,91,158,.08)}
+.nav button{flex:1;border:0;background:transparent;color:var(--ink2);font-size:12px;font-weight:500;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;position:relative}
+.nav button .ic{width:26px;height:26px}
+.nav button.on{color:var(--primary);font-weight:800}
+.nav button.on::before{content:"";position:absolute;top:0;width:32px;height:3px;border-radius:0 0 3px 3px;background:var(--primary)}
+/* chat */
+.chat{flex:1;display:flex;flex-direction:column;gap:12px;padding:14px 14px 8px}
+.bub{max-width:88%;border-radius:16px;padding:10px 12px;font-size:14.5px;line-height:1.45;white-space:pre-wrap}
+.bub.bot{background:#fff;border:1px solid var(--line);align-self:flex-start;border-top-right-radius:4px}
+.bub.me{background:var(--primary);color:#fff;align-self:flex-end;border-top-left-radius:4px}
+.cards{display:flex;flex-direction:column;gap:8px;align-self:stretch}
+.composer{position:sticky;bottom:68px;background:#fff;border-top:1px solid var(--line);padding:8px 12px;display:flex;gap:8px;align-items:center;z-index:12}
+.composer .in{flex:1}
+.composer button{width:46px;height:46px;border:0;border-radius:12px;background:var(--primary);color:#fff;display:flex;align-items:center;justify-content:center}
+.sugg{display:flex;flex-wrap:wrap;gap:8px}
+.sugg button{border:1.5px solid var(--primary);background:#fff;color:var(--primary-d);border-radius:99px;min-height:40px;padding:0 14px;font-weight:700;font-size:13.5px}
+.fakein{border:1.5px solid #9DB0C5;background:#fff;border-radius:12px;min-height:46px;padding:0 12px;color:var(--ink2);display:flex;align-items:center;gap:8px;text-align:right;width:100%;font-size:15px}
+.toast{position:fixed;bottom:84px;right:50%;transform:translateX(50%);background:var(--ink);color:#fff;padding:10px 18px;border-radius:14px;font-weight:700;font-size:14px;z-index:60;max-width:90vw;text-align:center}
+.modal{position:fixed;inset:0;background:rgba(10,18,28,.55);display:flex;align-items:center;justify-content:center;padding:20px;z-index:70}
+.modal>div{background:#fff;border-radius:20px;padding:20px;max-width:380px;width:100%;display:flex;flex-direction:column;gap:12px}
+.av.im{background:#fff;padding:0;overflow:hidden}.av.im img{width:100%;height:100%;display:block;border-radius:99px}.av.im.y{box-shadow:0 0 0 3px var(--yellow)}
+.logo img{height:30px;width:auto;display:block}
+.greet.il{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.greet.il>img{flex:none;width:auto;height:112px;margin-bottom:-6px}.greet.il>img.wide{height:96px}
+.greet.il .av{flex:none}
+.foot-ill{display:block;width:100%;height:auto;margin-top:18px;border-radius:16px}
+.empty img{width:190px;max-width:70%;height:auto;margin-bottom:4px}
+.empty{text-align:center;color:var(--ink2);padding:16px 8px;display:flex;flex-direction:column;gap:6px;align-items:center}
+.empty b{color:var(--primary);font-size:18px}
+.sect{display:flex;align-items:center;justify-content:space-between;border-radius:12px;padding:8px 12px;font-weight:800;font-size:14.5px}
+.sect.to{background:var(--green-t);color:var(--green-d)}.sect.from{background:var(--orange-t);color:var(--orange-d)}
+.kv{display:flex;justify-content:space-between;gap:12px;padding:9px 0;border-top:1px solid var(--line)}
+.kv:first-child{border-top:0}.kv span:first-child{color:var(--primary);font-weight:700}
+.hero-ill{height:70px;margin:-6px -14px -14px;border-radius:0 0 16px 16px;overflow:hidden}
+.sel-ok{outline:2.5px solid var(--green)}
+@media (prefers-reduced-motion:no-preference){button.card{transition:transform .12s}button.card:active{transform:scale(.99)}}
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script>
+(function(){
+'use strict';
+/* ================= icons ================= */
+var ICONS={
+ home:'<path d="M4 11l8-7 8 7"/><path d="M6 10v9h12v-9"/><path d="M10 19v-5h4v5"/>',
+ cal:'<rect x="4" y="5" width="16" height="15" rx="3"/><path d="M8 3v4M16 3v4M4 10h16"/><path d="M8 14h.01M12 14h.01M16 14h.01M8 17h.01M12 17h.01"/>',
+ chat:'<path d="M5 6h14a2 2 0 0 1 2 2v7a2 2 0 0 1-2 2h-8l-5 4v-4H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2z"/>',
+ user:'<circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-6 8-6s8 2 8 6"/>',
+ users:'<circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c0-3.5 3-5.5 6.5-5.5s6.5 2 6.5 5.5"/><circle cx="17" cy="9" r="2.5"/><path d="M17 14c3 0 4.5 2 4.5 4.5"/>',
+ bell:'<path d="M6 16V11a6 6 0 0 1 12 0v5l1.5 2h-15z"/><path d="M10 21h4"/>',
+ search:'<circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5"/>',
+ plus:'<path d="M12 5v14M5 12h14"/>',minus:'<path d="M5 12h14"/>',
+ check:'<path d="M5 12.5l4.5 4.5L19 7.5"/>',x:'<path d="M6 6l12 12M18 6L6 18"/>',
+ clock:'<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
+ hourglass:'<path d="M7 3h10M7 21h10M8 3c0 5 8 5 8 9s-8 4-8 9M16 3c0 5-8 5-8 9s8 4 8 9"/>',
+ car:'<path d="M4 15v-4l2-5h12l2 5v4"/><path d="M3 15h18v3H3z"/><circle cx="7.5" cy="13" r="1"/><circle cx="16.5" cy="13" r="1"/>',
+ ball:'<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3v18"/><path d="M5.5 5.5c4 3 4 10 0 13M18.5 5.5c-4 3-4 10 0 13"/>',
+ person:'<circle cx="12" cy="5.5" r="2.5"/><path d="M12 8.5v6M6.5 11l5.5 2 5.5-2M9 21l3-6.5 3 6.5"/>',
+ palette:'<path d="M12 3a9 9 0 1 0 0 18c1.5 0 2-1 1.5-2-.7-1.5.3-3 2-3H18a3 3 0 0 0 3-3c0-5-4-10-9-10z"/><circle cx="8" cy="11" r="1"/><circle cx="12" cy="7.5" r="1"/><circle cx="16" cy="11" r="1"/>',
+ music:'<path d="M9 18V6l10-2v12"/><circle cx="7" cy="18" r="2.5"/><circle cx="17" cy="16" r="2.5"/>',
+ pin:'<path d="M12 21s7-6 7-11a7 7 0 0 0-14 0c0 5 7 11 7 11z"/><circle cx="12" cy="10" r="2.5"/>',
+ phone:'<path d="M6 3h4l2 5-2.5 1.5a11 11 0 0 0 5 5L16 12l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 4 5a2 2 0 0 1 2-2z"/>',
+ mail:'<rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/>',
+ flag:'<path d="M5 21V4M5 4h11l-2 4 2 4H5"/>',
+ shield:'<path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/><path d="M8.5 12l2.5 2.5 4.5-5"/>',
+ send:'<path d="M21 3L10 14M21 3l-7 18-4-7-7-4z"/>',
+ edit:'<path d="M4 20h4L19 9l-4-4L4 16z"/>',
+ trash:'<path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13"/>',
+ back:'<path d="M9 5l7 7-7 7"/>',fwd:'<path d="M15 5l-7 7 7 7"/>',
+ down:'<path d="M5 9l7 7 7-7"/>',up:'<path d="M5 15l7-7 7 7"/>',
+ alert:'<path d="M12 3l10 18H2z"/><path d="M12 10v5M12 18h.01"/>',
+ info:'<circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/>',
+ mega:'<path d="M3 10v4l12 5V5z"/><path d="M7 15l1 5h3l-1-4"/><path d="M18 9c1.5 1 1.5 5 0 6"/>',
+ bot:'<rect x="4" y="8" width="16" height="12" rx="4"/><path d="M12 8V4M9 14h.01M15 14h.01"/>',
+ spark:'<path d="M12 2l1.9 5.6L19.5 9.5l-5.6 1.9L12 17l-1.9-5.6L4.5 9.5l5.6-1.9z"/>',
+ arr:'<path d="M5 12h14M13 6l6 6-6 6"/>',arl:'<path d="M19 12H5M11 6l-6 6 6 6"/>',
+ grid:'<rect x="4" y="4" width="7" height="7" rx="2"/><rect x="13" y="4" width="7" height="7" rx="2"/><rect x="4" y="13" width="7" height="7" rx="2"/><rect x="13" y="13" width="7" height="7" rx="2"/>'
+};
+function ic(n,s){return '<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"'+(s?' style="width:'+s+'px;height:'+s+'px"':'')+'>'+(ICONS[n]||'')+'</svg>'}
+
+/* ================= static data ================= */
+var DAYS=['ראשון','שני','שלישי','רביעי','חמישי','שישי','שבת'];
+var AREAS=['רמת אביב','רמת גן','תל אביב מרכז','פלורנטין','נווה צדק'];
+var CLOCKS=[
+ {k:'a',label:'8.11 · לפני ההסעות',iso:'2026-11-08T10:00'},
+ {k:'b',label:'9.11 · 17:12 (אחרי ההלוך)',iso:'2026-11-09T17:12'},
+ {k:'c',label:'9.11 · 18:45 (אחרי החזור)',iso:'2026-11-09T18:45'},
+ {k:'d',label:'10.11 · למחרת',iso:'2026-11-10T09:00'},
+ {k:'e',label:"11.11 · 18:30 (אחרי ג'ודו)",iso:'2026-11-11T18:30'}
+];
+var ROLES=[
+ {k:'michal',label:'מיכל לוי · הורה מבקש (ילד: נועם)'},
+ {k:'sharon',label:'שרון ברק · הורה מסיע (ילד: גל)'},
+ {k:'dana',label:'דנה כהן · הורה מסיע'},
+ {k:'yael',label:'יעל מור · הורה מסיע'},
+ {k:'noam',label:'נועם לוי · ילד'},
+ {k:'admin',label:'מנהל מערכת'}
+];
+function seed(){
+ return {
+  acts:{
+   bb:{id:'bb',name:'כדורסל',full:'חוג כדורסל',place:'אולם הספורט, רמת אביב',days:['שני'],start:'17:00',end:'18:30',icon:'ball',tone:'orange'},
+   judo:{id:'judo',name:"ג'ודו",full:"חוג ג'ודו",place:'מתנ״ס רמת אביב',days:['רביעי'],start:'16:30',end:'17:45',icon:'person',tone:'blue'},
+   art:{id:'art',name:'אומנות',full:'חוג אומנות',place:'בית האמנות, רמת אביב',days:['חמישי'],start:'16:00',end:'17:15',icon:'palette',tone:'violet'}
+  },
+  parents:{
+   michal:{id:'michal',name:'מיכל לוי',ini:'מל',phone:'050-0000001',email:'',addr:'רחוב הדוגמה 1',area:'רמת אביב',drive:false,lic:0,ins:0,bg:0,ver:null,child:'noam'},
+   sharon:{id:'sharon',name:'שרון ברק',ini:'שב',phone:'050-0000002',email:'',addr:'רחוב הדוגמה 2',area:'רמת אביב',drive:true,lic:1,ins:1,bg:0,ver:'1.11.2026',child:'gal'},
+   dana:{id:'dana',name:'דנה כהן',ini:'דכ',phone:'050-0000003',email:'',addr:'רחוב הדוגמה 3',area:'רמת אביב',drive:true,lic:1,ins:1,bg:0,ver:'1.11.2026',child:null},
+   yael:{id:'yael',name:'יעל מור',ini:'ימ',phone:'050-0000004',email:'',addr:'רחוב הדוגמה 4',area:'רמת גן',drive:true,lic:1,ins:1,bg:0,ver:'2.11.2026',child:null},
+   or:{id:'or',name:'אור דגן',ini:'אד',phone:'050-0000005',email:'',addr:'רחוב הדוגמה 5',area:'רמת אביב',drive:false,lic:0,ins:0,bg:0,ver:null,child:'yuval'},
+   avi:{id:'avi',name:'אבי מזרחי',ini:'אמ',phone:'050-0000006',email:'',addr:'רחוב הדוגמה 6',area:'פלורנטין',drive:false,lic:1,ins:0,bg:0,ver:null,child:null},
+   merav:{id:'merav',name:'מירב כהן',ini:'מכ',phone:'050-0000007',email:'',addr:'רחוב הדוגמה 7',area:'נווה צדק',drive:false,lic:0,ins:0,bg:0,ver:null,child:null}
+  },
+  kids:{
+   noam:{id:'noam',name:'נועם לוי',ini:'נל',acts:['bb','judo','art'],area:'רמת אביב',parent:'michal',addr:'רחוב הדוגמה 1',notes:'',active:true},
+   gal:{id:'gal',name:'גל ברק',ini:'גב',acts:['bb'],area:'רמת אביב',parent:'sharon',addr:'רחוב הדוגמה 2',notes:'',active:true},
+   yuval:{id:'yuval',name:'יובל דגן',ini:'יד',acts:['bb'],area:'רמת אביב',parent:'or',addr:'רחוב הדוגמה 5',notes:'',active:true}
+  },
+  rides:[
+   {id:'r1',dir:'to',act:'bb',date:'2026-11-09',time:'17:00',driver:'sharon',area:'רמת אביב',total:3,free:1,dchild:'gal',status:'open',arr:{}},
+   {id:'r2',dir:'from',act:'bb',date:'2026-11-09',time:'18:30',driver:'dana',area:'רמת אביב',total:3,free:2,dchild:null,status:'open',arr:{}},
+   {id:'r3',dir:'to',act:'judo',date:'2026-11-11',time:'16:30',driver:'yael',area:'רמת אביב',total:3,free:3,dchild:null,status:'open',arr:{}},
+   {id:'r4',dir:'from',act:'judo',date:'2026-11-11',time:'17:45',driver:'yael',area:'רמת אביב',total:3,free:2,dchild:null,status:'open',arr:{}}
+  ],
+  reqs:[
+   {id:'q1',parent:'or',child:'yuval',act:'bb',out:'r1',back:'r2',so:'approved',sb:'approved',end:null},
+   {id:'q2',parent:'michal',child:'noam',act:'judo',out:'r3',back:'r4',so:'pending',sb:'approved',end:null}
+  ],
+  ann:[{id:'n1',title:'שינוי בשעת ההסעה',body:'ההסעה של חוג כדורסל תצא 10 דקות מוקדם יותר.',aud:'bb',status:'sent',when:'8.11'}],
+  seq:10
+ };
+}
+var D=seed();
+var S={role:'michal',clock:'a',tab:'home',view:null,hist:false,toast:null,modal:null,open:null,form:null,errs:{},chat:newChat(),
+ q:{},annTab:'new',sf:{dir:'all',act:'',area:''},actTab:'week',fold:{},focus:null,sig:''};
+var root=document.getElementById('root');
+function newChat(){return {msgs:[],draft:null}}
+/* ================= helpers ================= */
+function esc(t){return String(t==null?'':t).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
+function now(){return new Date(CLOCKS.filter(function(x){return x.k===S.clock})[0].iso)}
+function dstr(d){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
+function rdt(r){return new Date(r.date+'T'+r.time)}
+function fd(date){var p=date.split('-');return (+p[2])+'.'+(+p[1])}
+function dayOf(date){return DAYS[new Date(date+'T12:00').getDay()]}
+function hhmm(d){return String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0')}
+function ride(id){return D.rides.filter(function(r){return r.id===id})[0]}
+function me(){return D.parents[S.role]||null}
+function isKid(){return S.role==='noam'}
+function isAdmin(){return S.role==='admin'}
+function kind(){return isAdmin()?'admin':isKid()?'kid':'parent'}
+function kidOf(u){return u&&u.child?D.kids[u.child]:null}
+function first(n){return String(n).split(' ')[0]}
+function act(k){return D.acts[k]}
+function dirName(d){return d==='to'?'הלוך':'חזור'}
+function dirChip(d){return '<span class="chip d-'+d+'">'+ic(d==='to'?'arr':'arl')+dirName(d)+'</span>'}
+function seatsText(free){return free<1?'אין מקומות פנויים':free===1?'מקום פנוי אחד':free+' מקומות פנויים'}
+function meter(occ,total){var p='';for(var i=0;i<total;i++)p+=ic('user').replace('class="ic"','class="ic'+(i<occ?' on':'')+'"');return '<span class="meter"><span>'+occ+'/'+total+' מקומות</span><span class="ppl" aria-hidden="true">'+p+'</span></span>'}
+function actTile(a){return '<div class="at t-'+(a.tone||'green')+'">'+ic(a.icon||'ball')+'</div>'}
+function chip(cls,icon,text){return '<span class="chip '+cls+'">'+(icon?ic(icon):'')+text+'</span>'}
+function toast(t){S.toast=t;render();clearTimeout(toast.t);toast.t=setTimeout(function(){S.toast=null;render()},2600)}
+function go(v){S.view=v;S.modal=null;S.errs={};render()}
+function logo(){return '<span class="logo"><img src="assets/logo-mark-light.svg" alt=""><span><i>Safe</i><u>Ride</u></span></span>'}
+function top(title,o){o=o||{};
+ return '<header class="top">'+(o.back?'<button class="ib" data-a="back" aria-label="חזרה">'+ic('back',26)+'</button>':'<span class="ib sp0"></span>')+'<h1>'+title+'</h1>'+(o.right||'<span class="ib sp0"></span>')+'</header>'}
+function topHome(){
+ var n=notifsFor(me()).length;
+ return '<header class="top"><button class="ib" data-a="notifs" aria-label="התראות">'+ic('bell',24)+(n?'<span class="badge">'+n+'</span>':'')+'</button><h1>'+logo()+'</h1><span class="ib sp0"></span></header>'}
+/* illustrated avatars (assets/avatar-*.svg); unknown ids get a stable pick by hash */
+var AVP={michal:'mom-1',sharon:'mom-3',dana:'mom-2',yael:'mom-1',or:'dad-2',avi:'dad-1',merav:'mom-2'},AVK={noam:'boy-1',gal:'girl-1',yuval:'boy-2'};
+function hsh(s){var h=0;s=String(s);for(var i=0;i<s.length;i++)h=(h*31+s.charCodeAt(i))>>>0;return h}
+function avImg(f,cls){return '<div class="av im '+(cls||'')+'"><img src="assets/avatar-'+f+'.svg" alt=""></div>'}
+function pAv(p,cls){return avImg(AVP[p.id]||['mom-1','mom-2','mom-3','dad-1','dad-2'][hsh(p.id)%5],cls)}
+function kidAv(k,cls){return avImg(AVK[k.id]||['boy-1','boy-2','girl-1'][hsh(k.id)%3],'')}
+function approvedKids(r){
+ var out=[]; if(r.dchild) out.push(r.dchild);
+ D.reqs.forEach(function(q){
+  if(q.out===r.id&&q.so==='approved'&&q.parent!==r.driver&&out.indexOf(q.child)<0) out.push(q.child);
+  if(q.back===r.id&&q.sb==='approved'&&q.parent!==r.driver&&out.indexOf(q.child)<0) out.push(q.child);
+ });
+ return out;
+}
+function reqState(q){
+ if(q.so==='rejected'||q.sb==='rejected') return 'rejected';
+ if(q.so==='approved'&&q.sb==='approved') return 'settled';
+ return 'pending';
+}
+function activeReq(kid,a){return D.reqs.filter(function(q){return q.child===kid&&q.act===a&&reqState(q)!=='rejected'})[0]||null}
+function lastReq(kid,a){var l=D.reqs.filter(function(q){return q.child===kid&&q.act===a});return l[l.length-1]||null}
+function windowState(r){
+ var n=now(),start=rdt(r),end=new Date(r.date+'T00:00');end.setDate(end.getDate()+1);
+ if(n<start) return 'early'; if(n>=end) return 'late'; return 'open';
+}
+function rstat(r){
+ if(r.status==='cancelled') return 'cancelled'; if(r.status==='completed') return 'completed';
+ var w=windowState(r); if(w==='open') return 'progress'; if(w==='late') return 'stale';
+ return r.free<1?'full':'open';
+}
+function statusChip(r){
+ var m={cancelled:['c-red','x','בוטלה'],completed:['c-green','flag','ההסעה הסתיימה'],progress:['c-blue','car','בדרך'],stale:['c-yellow','clock','ממתינה לדיווח סיום'],full:['c-gray','users','מלאה'],open:['c-blue','check','פתוחה']}[rstat(r)];
+ return chip(m[0],m[1],m[2]);
+}
+function arrInfo(r,kid){
+ var a=r.arr[kid]; if(!a||(!a.child_at&&!a.guardian_at)) return null;
+ var ts=[];if(a.child_at)ts.push(['child',a.child_at]);if(a.guardian_at)ts.push(['guardian',a.guardian_at]);
+ ts.sort(function(x,y){return x[1]<y[1]?-1:1});
+ return {who:ts[0][0],at:new Date(ts[0][1]),both:ts.length===2};
+}
+function arrChip(r,kid){
+ var a=arrInfo(r,kid);
+ if(!a) return chip('c-yellow','hourglass','ממתין לאישור הגעה');
+ return chip('c-green','check',a.who==='child'?'הגעה אושרה על ידי הילד':'הגעה אושרה על ידי ההורה');
+}
+function claim(r){if(r.status!=='open'||r.free<1) return false;r.free--;if(r.free===0)r.status='full';return true}
+function release(r){if(r.status==='cancelled'||r.status==='completed')return;r.free=Math.min(r.total,r.free+1);if(r.status==='full'&&r.free>0)r.status='open'}
+function closePair(q,why){
+ [['out','so'],['back','sb']].forEach(function(p){
+  var r=ride(q[p[0]]);
+  if(q[p[1]]==='approved'&&q.parent!==r.driver) release(r);
+  q[p[1]]='rejected';
+ });
+ q.end=why;
+}
+function decide(qid,dir,ok){
+ var q=D.reqs.filter(function(x){return x.id===qid})[0],r=ride(dir==='out'?q.out:q.back),key=dir==='out'?'so':'sb';
+ if(q[key]!=='pending'||reqState(q)==='rejected'){toast('הבקשה כבר לא פתוחה');return}
+ if(!ok){closePair(q,(dir==='out'?'out':'back')+'_rejected');toast('הבקשה נדחתה. האישור בכיוון השני בוטל והמקום שוחרר');return}
+ if(!claim(r)){toast('המקום האחרון כבר נתפס. הבקשה לא אושרה.');render();return}
+ q[key]='approved';
+ toast(reqState(q)==='settled'?'אושר. '+D.kids[q.child].name+' מסודר בשני הכיוונים':'אושר זמנית. הילד מסודר רק כששני הכיוונים יאושרו');
+}
+function cancelRide(r){
+ r.status='cancelled';
+ D.reqs.forEach(function(q){
+  if(reqState(q)==='rejected') return;
+  if(q.out===r.id||q.back===r.id){
+   var d=q.out===r.id?'out':'back',other=ride(d==='out'?q.back:q.out),ok=d==='out'?'sb':'so';
+   if(q[ok]==='approved'&&q.parent!==other.driver) release(other);
+   q.so='rejected';q.sb='rejected';q.end=d+'_cancelled';
+  }
+ });
+}
+function endText(q){
+ var m={out_rejected:'מסיע ההלוך דחה את הכיוון שלו',back_rejected:'מסיע החזור דחה את הכיוון שלו',out_cancelled:'הסעת ההלוך בוטלה',back_cancelled:'הסעת החזור בוטלה'};
+ return (m[q.end]||'הבקשה נדחתה')+'. האישור הזמני בכיוון השני בוטל והמקום שוחרר.';
+}
+function pendingFor(uid){
+ var l=[];
+ D.reqs.forEach(function(q){
+  if(reqState(q)==='rejected') return;
+  var o=ride(q.out),b=ride(q.back);
+  if(q.so==='pending'&&o.driver===uid&&o.status==='open') l.push({q:q,dir:'out',r:o});
+  if(q.sb==='pending'&&b.driver===uid&&b.status==='open') l.push({q:q,dir:'back',r:b});
+ });
+ return l;
+}
+function kidRides(kid){return D.rides.filter(function(r){return r.status!=='cancelled'&&approvedKids(r).indexOf(kid)>=0}).sort(function(a,b){return rdt(a)-rdt(b)})}
+function eligible(r,u){return r.status==='open'&&r.free>0&&rdt(r)>=now()&&r.driver!==u.id}
+function annFor(u){
+ var k=kidOf(u);
+ return D.ann.filter(function(a){return a.status==='sent'&&(a.aud==='all'||(k&&k.acts.indexOf(a.aud)>=0))});
+}
+function notifsFor(u){
+ var out=[];if(!u||isAdmin()||isKid())return out;
+ annFor(u).forEach(function(a){out.push({t:'ann',a:a})});
+ var k=kidOf(u);
+ if(k)kidRides(k.id).forEach(function(r){if(r.status==='completed')out.push({t:'done',r:r})});
+ return out;
+}
+function syncChild(pid){var p=D.parents[pid];if(!p)return;var ks=Object.keys(D.kids).filter(function(k){return D.kids[k].parent===pid});p.child=ks[0]||null}
+function mkIni(n){var p=n.trim().split(/\s+/);return (p[0]?p[0][0]:'')+(p[1]?p[1][0]:'')}
+/* ================= fake AI (rule based) ================= */
+function parseText(t){
+ var o={act:null,dir:null,date:null,time:null,area:null,seats:null};
+ Object.keys(D.acts).forEach(function(k){if(t.indexOf(D.acts[k].name)>=0)o.act=k});
+ if(/מהחוג|חזרה|הביתה|חזור|מחזיר/.test(t)) o.dir='from'; else if(/אל החוג|לחוג|הלוך|אל /.test(t)) o.dir='to';
+ var tm=t.match(/(\d{1,2}):(\d{2})/); if(tm) o.time=String(tm[1]).padStart(2,'0')+':'+tm[2];
+ var base=now(),d=new Date(base);d.setHours(12,0,0,0);
+ var dm=t.match(/(?:יום\s|ב)(ראשון|שני|שלישי|רביעי|חמישי|שישי|שבת)(?!\s*(?:מקומות|מושבים))/);
+ if(dm){var idx=DAYS.indexOf(dm[1]);while(d.getDay()!==idx)d.setDate(d.getDate()+1);o.date=dstr(d)}
+ else if(/מחר/.test(t)){d.setDate(d.getDate()+1);o.date=dstr(d)}
+ AREAS.forEach(function(a){if(t.indexOf(a)>=0)o.area=a});
+ var words={'אחד':1,'שניים':2,'שני':2,'שלושה':3,'שלוש':3,'ארבעה':4,'ארבע':4,'חמישה':5,'חמש':5,'שישה':6,'שבעה':7,'שמונה':8};
+ var sm=t.match(/(\d+)\s*(?:מקומות|מושבים|מושב|מקום)/);
+ if(sm)o.seats=+sm[1];
+ else{var wm=t.match(/(אחד|שניים|שני|שלושה|שלוש|ארבעה|ארבע|חמישה|חמש|שישה|שבעה|שמונה)\s*(?:מקומות|מושבים)/);if(wm)o.seats=words[wm[1]];else if(/מקום אחד|מושב אחד/.test(t))o.seats=1}
+ return {ok:!!(o.act||o.dir||o.date||o.time||o.area||o.seats),f:o};
+}
+/* ================= shared view parts ================= */
+function dirTile(dir,r,u){
+ if(!r) return '<div class="dtile '+dir+'">'+dirChip(dir)+'<span class="small">אין עדיין הסעת '+dirName(dir)+'</span></div>';
+ var d=D.parents[r.driver],occ=r.total-r.free;
+ return '<div class="dtile '+dir+'"><div class="row sp">'+dirChip(dir)+'</div><b class="t">'+r.time+'</b><span class="small">נהג: '+esc(d.name)+'</span>'+meter(occ,r.total)+'<div>'+statusChip(r)+'</div></div>';
+}
+function rideCard(r,extra){
+ var d=D.parents[r.driver],a=act(r.act),occ=r.total-r.free;
+ return '<div class="row sp"><div class="row">'+actTile(a)+'<div><b style="font-size:16px">'+esc(a.full)+'</b><div class="small">'+dayOf(r.date)+' · '+fd(r.date)+' · '+r.time+'</div></div></div>'+dirChip(r.dir)+'</div>'+
+ '<div class="row sp"><div class="row">'+pAv(d,'v')+'<div><b>'+esc(d.name)+'</b><div class="small" style="color:var(--green-d);font-weight:700">מסיע מאומת</div></div></div>'+meter(occ,r.total)+'</div>'+
+ '<div class="small">'+ic('pin',14)+' '+(r.dir==='to'?'אזור איסוף':'אזור הורדה')+': '+esc(r.area)+'</div>'+(extra||'');
+}
+function reqCard(q){
+ var kid=D.kids[q.child],st=reqState(q);
+ var c=function(k,l){var v=q[k];return chip(v==='approved'?'c-green':v==='rejected'?'c-red':'c-yellow',v==='approved'?'check':v==='rejected'?'x':'hourglass',l+': '+(v==='approved'?'אושרה':v==='rejected'?'נדחתה':'בהמתנה'))};
+ var b='<div class="row sp"><b style="font-size:16px">'+esc(kid.name)+' · '+esc(act(q.act).full)+'</b></div><div class="row wrap">'+c('so','הלוך')+c('sb','חזור')+'</div>';
+ if(st==='settled') b+='<div class="note" style="background:var(--green-t);color:var(--green-d)">'+ic('check')+esc(first(kid.name))+' מסודר בשני הכיוונים</div>';
+ else if(st==='pending') b+='<div class="tag">אישור בכיוון אחד הוא זמני. הילד מסודר רק כששני הכיוונים יאושרו.</div>';
+ else b+='<div class="note" style="background:var(--red-t);color:var(--red-d)">'+ic('x')+endText(q)+'</div><button class="btn sm warn" data-a="newReq" data-act="'+q.act+'">שליחת בקשה חדשה</button>';
+ return '<div class="card">'+b+'</div>';
+}
+function guardCard(r,kid){
+ var a=arrInfo(r,kid.id);
+ if(a) return '<div class="card tint-green"><div class="row">'+ic('check',24)+'<div class="grow"><b>'+esc(first(kid.name))+' · '+dirName(r.dir)+': '+(a.who==='child'?'הגעה אושרה על ידי הילד':'הגעה אושרה על ידי ההורה')+'</b><div class="small">'+hhmm(a.at)+' · '+esc(act(r.act).full)+'</div></div></div></div>';
+ return '<div class="card tint-yellow"><div class="row"><div class="at t-green">'+ic('flag')+'</div><div class="grow"><b>האם '+esc(first(kid.name))+' הגיע/ה ליעד?</b><div class="small">'+dirName(r.dir)+' · '+esc(act(r.act).full)+' · '+r.time+'</div></div></div><button class="btn ok sm" data-a="guardArrive" data-id="'+r.id+'">'+ic('check')+'אישור הגעת '+esc(first(kid.name))+'</button></div>';
+}
+function assistCard(chips){
+ return '<div class="card tint-blue"><div class="row"><div class="at" style="background:var(--primary);color:#fff">'+ic('bot')+'</div><div><b style="font-size:16px;color:var(--primary)">איך אפשר לעזור?</b><div class="small">אפשר לשאול או לבקש לבצע פעולה</div></div></div>'+
+ '<button class="fakein" data-a="openChat">'+ic('chat')+'מה תרצו לעשות היום?</button><div class="sugg">'+chips.map(function(c){return '<button data-a="chatPrompt" data-t="'+esc(c)+'">'+esc(c)+'</button>'}).join('')+'</div></div>';
+}
+function chipsFor(){return kind()==='kid'?['מי לוקח אותי היום?']:kind()==='admin'?['כמה ילדים רשומים לכדורסל?','הכן הודעה להורי החוג']:['מצא לי הסעה','פתח הסעה חדשה','מי מחזיר את הילד?']}
+function annCard(a){
+ return '<div class="card tint-yellow"><div class="row"><div class="at t-orange" style="background:var(--yellow);color:var(--yellow-ink)">'+ic('mega')+'</div><div class="grow"><b>'+esc(a.title)+'</b><div class="small">הודעה חשובה · '+esc(a.when)+'</div></div></div><div style="font-size:14px">'+esc(a.body)+'</div></div>';
+}
+/* ================= parent views ================= */
+function viewHome(){
+ var u=me(),k=kidOf(u),h=topHome()+'<div class="page"><div class="greet il"><div><h2>שלום, '+esc(first(u.name))+' 👋</h2><p>הנה מה שמחכה לכם השבוע</p></div>'+pAv(u,'lg v')+'</div><div class="pad">';
+ /* next activity */
+ var up=k?kidRides(k.id).filter(function(r){return r.date>=dstr(now())&&r.status!=='completed'||r.date>dstr(now())}):[];
+ if(k&&up.length){
+  var f=up[0],a=act(f.act),to=up.filter(function(r){return r.act===f.act&&r.date===f.date&&r.dir==='to'})[0],fr=up.filter(function(r){return r.act===f.act&&r.date===f.date&&r.dir==='from'})[0];
+  h+='<div class="card tint-green"><div class="row">'+actTile(a)+'<div class="grow"><div class="small" style="font-weight:700">החוג הבא</div><b style="font-size:19px">'+esc(a.full)+'</b><div class="small">'+dayOf(f.date)+' · '+fd(f.date)+' · '+(to?to.time:f.time)+'</div></div></div><div class="row2">'+dirTile('to',to,u)+dirTile('from',fr,u)+'</div></div>';
+ } else if(k){
+  h+='<div class="card"><div class="empty"><img src="assets/family.svg" alt=""><b>אין עדיין הסעה מאושרת</b><span>חפשו הסעה לחוג של '+esc(first(k.name))+' או פתחו הסעה חדשה.</span></div></div>';
+ } else h+='<div class="note">'+ic('info')+'אין ילד משויך לחשבון. מנהל המערכת משייך ילדים להורים.</div>';
+ /* guardian arrival */
+ if(k) kidRides(k.id).forEach(function(r){if(windowState(r)==='open') h+=guardCard(r,k)});
+ /* shortcuts */
+ h+='<div class="row2"><button class="btn ok" data-a="goSearch">'+ic('search')+'חיפוש הסעה</button>'+(u.drive?'<button class="btn primary" data-a="newRide">'+ic('car')+'פתיחת הסעה</button>':'<button class="btn primary" disabled>'+ic('car')+'פתיחת הסעה</button>')+'</div>';
+ if(!u.drive) h+='<div class="note">'+ic('info')+'פתיחת הסעה זמינה להורים שהמנהל אישר להסיע.</div>';
+ /* stats */
+ var upcoming=D.rides.filter(function(r){return r.driver===u.id&&(r.status==='open'||r.status==='full')}).length+(k?kidRides(k.id).filter(function(r){return r.driver!==u.id&&r.status!=='completed'}).length:0);
+ var pend=pendingFor(u.id).length;
+ h+='<div class="stats"><button class="stat s-blue" data-a="actsTab">'+ic('cal')+'<b>'+upcoming+'</b><span>הסעות קרובות</span></button><button class="stat s-orange" data-a="reqs">'+ic('users')+'<b>'+pend+'</b><span>בקשות ממתינות</span></button></div>';
+ h+=assistCard(chipsFor());
+ var an=annFor(u)[0]; if(an) h+=annCard(an);
+ if(u.drive) h+='<button class="btn line" data-a="myrides">'+ic('car')+'ההסעות שאני מסיע/ה</button>';
+ /* my requests */
+ if(k){var rq=[];k.acts.forEach(function(a){var q=lastReq(k.id,a);if(q&&q.parent===u.id)rq.push(reqCard(q))});if(rq.length)h+='<h3 class="h2">הבקשות שלי</h3>'+rq.join('')}
+ return h+'</div></div>';
+}
+function viewNotifs(){
+ var u=me(),l=notifsFor(u);
+ var h=top('התראות',{back:true})+'<div class="page"><div class="pad" style="padding-top:14px">';
+ if(!l.length) h+='<div class="card"><div class="empty"><b>אין התראות חדשות</b></div></div>';
+ l.forEach(function(n){
+  if(n.t==='ann') h+=annCard(n.a);
+  else{var r=n.r,k=kidOf(u);h+='<div class="card"><div class="row"><div class="at t-green">'+ic('flag')+'</div><div class="grow"><b>ההסעה הסתיימה</b><div class="small">'+esc(act(r.act).full)+' · '+dirName(r.dir)+' · '+(r.doneAt?hhmm(new Date(r.doneAt)):'')+'</div></div></div><div>'+arrChip(r,k.id)+'</div></div>'}
+ });
+ return h+'</div></div>';
+}
+/* search (P03) */
+function viewSearch(){
+ var u=me(),k=kidOf(u),f=S.sf;
+ var h=top('חיפוש הסעה לחוג',{back:true})+'<div class="page"><div class="pad" style="padding-top:14px">';
+ if(!k) return h+'<div class="note">'+ic('info')+'אין ילד משויך לחשבון, ולכן אי אפשר לבקש הצטרפות.</div></div></div>';
+ var rides=D.rides.filter(function(r){return eligible(r,u)&&k.acts.indexOf(r.act)>=0&&(!f.act||r.act===f.act)&&(!f.area||r.area===f.area)&&!(activeReq(k.id,r.act))});
+ var nTo=rides.filter(function(r){return r.dir==='to'}).length,nFr=rides.filter(function(r){return r.dir==='from'}).length;
+ h+='<div class="field"><label for="sfa">'+ic('ball')+'חוג</label><select id="sfa" class="in" data-sf="act"><option value="">כל החוגים של '+esc(first(k.name))+'</option>'+k.acts.map(function(a){return '<option value="'+a+'" '+(f.act===a?'selected':'')+'>'+esc(act(a).full)+'</option>'}).join('')+'</select></div>';
+ h+='<div class="field"><label for="sfr">'+ic('pin')+'אזור</label><select id="sfr" class="in" data-sf="area"><option value="">כל האזורים</option>'+AREAS.map(function(a){return '<option '+(f.area===a?'selected':'')+'>'+a+'</option>'}).join('')+'</select></div>';
+ h+='<div class="seg" role="tablist">'+[['all','הכול ('+rides.length+')',''],['to','הלוך ('+nTo+')','g'],['from','חזור ('+nFr+')','o']].map(function(x){return '<button class="'+(f.dir===x[0]?'on '+x[2]:'')+'" data-a="sfDir" data-v="'+x[0]+'">'+x[1]+'</button>'}).join('')+'</div>';
+ var shown=rides.filter(function(r){return f.dir==='all'||r.dir===f.dir}).sort(function(a,b){return rdt(a)-rdt(b)});
+ if(!shown.length) h+='<div class="card"><div class="empty"><b>לא נמצאו הסעות פנויות</b><span>כשתיפתח הסעה שמתאימה, היא תופיע כאן.</span></div></div>';
+ ['to','from'].forEach(function(d){
+  var l=shown.filter(function(r){return r.dir===d});if(!l.length)return;
+  h+='<div class="sect '+d+'"><span>'+ic(d==='to'?'arr':'arl')+' '+dirName(d)+(d==='to'?' לחוג':' מהחוג')+'</span><span>('+l.length+' תוצאות)</span></div>';
+  l.forEach(function(r){h+='<div class="card">'+rideCard(r,'<button class="btn primary sm" data-a="openJoin" data-id="'+r.id+'">בקשת הצטרפות</button>')+'</div>'});
+ });
+ return h+'</div></div>';
+}
+/* join (P04) */
+function startJoin(rideId){
+ var r=ride(rideId),u=me(),kid=kidOf(u);
+ if(!kid){toast('אין ילד משויך לחשבון');return}
+ var j={act:r.act,date:r.date,kid:kid.id,out:null,back:null};
+ j[r.dir==='to'?'out':'back']=r.id;
+ S.view={name:'join',j:j};S.errs={};render();
+}
+function joinDirState(j,dir){
+ var u=me(),c=D.rides.filter(function(x){return x.act===j.act&&x.date===j.date&&x.dir===dir&&x.status==='open'});
+ return {locked:c.filter(function(x){return x.driver===u.id&&x.dchild===j.kid})[0]||null,cands:c.filter(function(x){return x.free>0&&x.driver!==u.id})};
+}
+function viewJoin(){
+ var j=S.view.j,kid=D.kids[j.kid],a=act(j.act);
+ var h=top('רישום להסעה לחוג',{back:true})+'<div class="page"><div class="pad" style="padding-top:14px">';
+ h+='<div class="card tint-blue"><div class="row">'+actTile(a)+'<div><b style="font-size:17px">'+esc(a.full)+'</b><div class="small">'+esc(kid.name)+' · '+dayOf(j.date)+' '+fd(j.date)+'</div></div></div><div class="small">בחרו הסעת הלוך והסעת חזור. כל מסיע מאשר את הכיוון שלו.</div></div>';
+ var ready=true;
+ ['to','from'].forEach(function(dir){
+  var key=dir==='to'?'out':'back',st=joinDirState(j,dir);
+  h+='<div class="sect '+dir+'"><span>'+ic(dir==='to'?'arr':'arl')+' '+dirName(dir)+(dir==='to'?' לחוג':' מהחוג')+'</span></div>';
+  if(st.locked){j[key]=st.locked.id;h+='<div class="card tint-green">'+rideCard(st.locked,'<div class="note" style="background:#fff;color:var(--green-d)">'+ic('check')+'הילד כבר בהסעה שלך</div>')+'</div>'}
+  else if(!st.cands.length){ready=false;h+='<div class="card"><div class="empty"><b>אין עדיין הסעת '+dirName(dir)+'</b><span>אי אפשר לשלוח בקשה. הסעה חדשה תופיע בחיפוש הסעה.</span></div></div>'}
+  else{
+   if(j[key]&&!st.cands.some(function(x){return x.id===j[key]}))j[key]=null;
+   if(!j[key]&&st.cands.length===1)j[key]=st.cands[0].id;
+   if(!j[key])ready=false;
+   st.cands.forEach(function(x){
+    var sel=j[key]===x.id;
+    h+='<button class="card '+(sel?'sel-ok':'')+'" data-a="pick" data-k="'+key+'" data-id="'+x.id+'">'+rideCard(x,sel?'<div>'+chip('c-green','check','הסעה נבחרה')+'</div>':'<div class="small">לחצו לבחירה</div>')+'</button>';
+   });
+  }
+ });
+ h+='<div class="note">'+ic('info')+'שימו לב: ניתן לבחור הסעות שונות להלוך ולחזור, עם נהגים שונים.</div>';
+ if(!ready) h+='<div class="tag" style="text-align:center">יש לבחור הסעת הלוך והסעת חזור כדי לשלוח בקשה.</div>';
+ h+='<button class="btn primary" data-a="sendJoin" '+(ready?'':'disabled')+'>'+ic('send')+'שליחת בקשת הצטרפות</button></div></div>';
+ return h;
+}
+function sendJoin(){
+ var j=S.view.j,u=me(),o=ride(j.out),b=ride(j.back);
+ if(activeReq(j.kid,j.act)){toast('כבר קיימת בקשה פעילה לילד בחוג הזה');return}
+ var po=o.driver===u.id&&o.dchild===j.kid,pb=b.driver===u.id&&b.dchild===j.kid;
+ if(!po&&o.driver===u.id||!pb&&b.driver===u.id){toast('מסיע אינו יכול לבקש הצטרפות להסעה שלו');return}
+ D.seq++;
+ D.reqs.push({id:'q'+D.seq,parent:u.id,child:j.kid,act:j.act,out:j.out,back:j.back,so:po?'approved':'pending',sb:pb?'approved':'pending',end:null});
+ S.view=null;S.tab='home';toast('הבקשה נשלחה. אישור בכיוון אחד הוא זמני');
+}
+/* open ride (P02) */
+function initOpen(){
+ var u=me(),k=kidOf(u);
+ return {act:k&&k.acts[0]||Object.keys(D.acts)[0],dir:'to',date:'',time:'',area:k?k.area:AREAS[0],seats:4};
+}
+function openErrs(o){
+ var u=me(),k=kidOf(u),kin=k&&k.acts.indexOf(o.act)>=0?k:null,e=[];
+ if(!o.act)e.push('חסר: חוג');if(!o.dir)e.push('חסר: כיוון');if(!o.date)e.push('חסר: תאריך');if(!o.time)e.push('חסר: שעה');if(!o.area)e.push('חסר: אזור');
+ if(kin&&o.seats<2)e.push('נדרשים לפחות שני מקומות ברכב כשהילד שלך נוסע.');
+ if(o.date&&o.time&&new Date(o.date+'T'+o.time)<=now())e.push('מועד ההסעה כבר עבר.');
+ return e;
+}
+function viewNewRide(){
+ var o=S.open,u=me(),k=kidOf(u),kin=k&&k.acts.indexOf(o.act)>=0?k:null,e=openErrs(o);
+ var h=top('פתיחת הסעה חדשה',{back:true})+'<div class="page"><div class="pad" style="padding-top:14px">';
+ h+='<div class="field"><label for="o1">'+ic('ball')+'חוג / פעילות <span class="req">*</span></label><select id="o1" class="in" data-o="act" data-rr="1">'+Object.keys(D.acts).map(function(a){return '<option value="'+a+'" '+(o.act===a?'selected':'')+'>'+esc(act(a).full)+'</option>'}).join('')+'</select></div>';
+ h+='<div class="row2"><div class="field"><label for="o2">'+ic('cal')+'תאריך <span class="req">*</span></label><input id="o2" type="date" class="in" data-o="date" data-rr="1" value="'+esc(o.date)+'"></div><div class="field"><label for="o3">'+ic('clock')+'שעה <span class="req">*</span></label><input id="o3" type="time" class="in" data-o="time" data-rr="1" value="'+esc(o.time)+'"></div></div>';
+ h+='<div class="field"><span class="lbl">'+ic('car')+'כיוון ההסעה <span class="req">*</span></span><div class="seg"><button class="'+(o.dir==='to'?'on g':'')+'" data-a="oDir" data-v="to">'+ic('arr')+'הלוך</button><button class="'+(o.dir==='from'?'on o':'')+'" data-a="oDir" data-v="from">'+ic('arl')+'חזור</button></div></div>';
+ h+='<div class="field"><label for="o4">'+ic('pin')+(o.dir==='from'?'אזור הורדה':'אזור איסוף')+' <span class="req">*</span></label><select id="o4" class="in" data-o="area" data-rr="1">'+AREAS.map(function(a){return '<option '+(o.area===a?'selected':'')+'>'+a+'</option>'}).join('')+'</select></div>';
+ h+='<div class="field"><span class="lbl">'+ic('users')+'מספר מקומות כולל לילדים <span class="req">*</span></span><div class="stepper"><button data-a="seat" data-d="-1" aria-label="פחות">'+ic('minus')+'</button><b>'+o.seats+'</b><button data-a="seat" data-d="1" aria-label="יותר">'+ic('plus')+'</button></div></div>';
+ if(kin){
+  h+='<div class="card tint-green"><div class="row">'+kidAv(kin,'g')+'<div><b>הילד שלך נוסף אוטומטית להסעה</b><div class="small">'+esc(kin.name)+' ('+esc(act(o.act).name)+')</div></div></div></div>';
+  h+='<div class="stats"><div class="stat s-orange">'+ic('user')+'<b>1</b><span>מקום תפוס (הילד שלי)</span></div><div class="stat s-green">'+ic('users')+'<b>'+Math.max(0,o.seats-1)+'</b><span>מקומות פנויים</span></div></div>';
+ }
+ e.forEach(function(x){h+='<div class="err" role="alert">'+ic('alert',16)+x+'</div>'});
+ h+='<button class="btn primary" data-a="saveRide" '+(e.length?'disabled':'')+'>'+ic('car')+'צור הסעה</button>';
+ h+='<button class="btn line sm" data-a="chatPrompt" data-t="פתח הסעה חדשה">'+ic('bot')+'מעדיפים לכתוב חופשי? שאלו את העוזר</button></div></div>';
+ return h;
+}
+function createRide(f){
+ var u=me(),kid=kidOf(u),kin=kid&&kid.acts.indexOf(f.act)>=0?kid:null;
+ D.seq++;
+ var r={id:'r'+D.seq,dir:f.dir,act:f.act,date:f.date,time:f.time,driver:u.id,area:f.area,total:f.seats,free:f.seats-(kin?1:0),dchild:kin?kin.id:null,status:(f.seats-(kin?1:0))>0?'open':'full',arr:{}};
+ D.rides.push(r);return r;
+}
+/* driver: my rides, requests, detail */
+function viewMyRides(){
+ var u=me(),mine=D.rides.filter(function(r){return r.driver===u.id});
+ var list=mine.filter(function(r){var h=r.status==='cancelled'||r.status==='completed';return S.hist?h:!h}).sort(function(a,b){return rdt(a)-rdt(b)});
+ var h=top('ההסעות שלי',{back:true})+'<div class="page"><div class="pad" style="padding-top:14px">';
+ h+='<div class="seg"><button class="'+(S.hist?'':'on')+'" data-a="hist" data-v="0">הסעות קרובות</button><button class="'+(S.hist?'on':'')+'" data-a="hist" data-v="1">היסטוריה</button></div>';
+ if(!list.length) h+='<div class="card"><div class="empty"><span>'+(S.hist?'אין עדיין הסעות שהושלמו או בוטלו.':'אין הסעות קרובות. פתחו הסעה חדשה.')+'</span></div></div>';
+ list.forEach(function(r){
+  var a=act(r.act);
+  h+='<button class="card" data-a="rideDetail" data-id="'+r.id+'"><div class="row">'+actTile(a)+'<div class="grow"><b>'+esc(a.full)+'</b><div class="small">'+dayOf(r.date)+' · '+fd(r.date)+' · '+r.time+'</div></div>'+dirChip(r.dir)+'</div><div class="row sp">'+meter(r.total-r.free,r.total)+statusChip(r)+'</div></button>';
+ });
+ if(!S.hist) h+='<button class="btn primary" data-a="newRide">'+ic('plus')+'פתיחת הסעה חדשה</button>';
+ return h+'</div></div>';
+}
+function etaOf(r){var t=r.time.split(':'),d=new Date(2000,0,1,+t[0],+t[1]-(r.dir==='to'?15:0));return hhmm(d)}
+function viewReqs(){
+ var u=me(),pend=pendingFor(u.id);
+ var h=top('בקשות הצטרפות להסעה',{back:true})+'<div class="page"><div class="pad" style="padding-top:14px">';
+ var rs={};pend.forEach(function(p){rs[p.r.id]=p.r});
+ Object.keys(rs).forEach(function(id){var r=rs[id],a=act(r.act);h+='<div class="card tint-blue"><div class="row sp"><div><b>הסעה שלי: '+dirName(r.dir)+' · '+esc(a.name)+'</b><div class="small">'+dayOf(r.date)+' · '+fd(r.date)+' · '+r.time+'</div></div>'+meter(r.total-r.free,r.total)+'</div></div>'});
+ h+='<h3 class="h2">'+pend.length+' '+(pend.length===1?'בקשה חדשה':'בקשות חדשות')+' להצטרפות</h3>';
+ if(!pend.length) h+='<div class="card"><div class="empty"><b>אין בקשות ממתינות</b></div></div>';
+ pend.forEach(function(p){
+  var q=p.q,kid=D.kids[q.child],par=D.parents[q.parent],other=p.dir==='out'?'sb':'so',ov=q[other];
+  h+='<div class="card"><div class="row">'+kidAv(kid,'g')+'<div class="grow"><b style="font-size:16px">'+esc(kid.name)+'</b><div class="small">הורה: '+esc(par.name)+'</div><div class="small">אזור: '+esc(kid.area)+' · איסוף משוער '+etaOf(p.r)+'</div></div>'+dirChip(p.r.dir)+'</div>'+
+  '<div class="small">הכיוון השני: '+(ov==='approved'?'אושר':'בהמתנה')+'</div>'+
+  '<div class="row2"><button class="btn rej sm" data-a="decide" data-q="'+q.id+'" data-d="'+p.dir+'" data-ok="0">'+ic('x')+'דחייה</button><button class="btn ok sm" data-a="decide" data-q="'+q.id+'" data-d="'+p.dir+'" data-ok="1">'+ic('check')+'אישור</button></div></div>';
+ });
+ return h+'</div></div>';
+}
+function viewDetail(){
+ var r=ride(S.view.id),u=me(),kids=approvedKids(r),a=act(r.act),st=rstat(r),w=windowState(r),occ=r.total-r.free;
+ var h=top('ההסעה שלי',{back:true})+'<div class="page"><div class="pad" style="padding-top:12px">';
+ var bn={progress:['var(--green)','var(--green-ink)','הסעה פעילה','car'],open:['var(--primary-t)','var(--primary-d)','הסעה פתוחה','check'],full:['#EAEFF4','#475569','הסעה מלאה','users'],completed:['var(--green-t)','var(--green-d)','ההסעה הסתיימה','flag'],cancelled:['var(--red-t)','var(--red-d)','ההסעה בוטלה','x'],stale:['var(--yellow-t)','var(--yellow-d)','ממתינה לדיווח סיום','clock']}[st];
+ h+='<div class="row" style="background:'+bn[0]+';color:'+bn[1]+';border-radius:12px;padding:8px 12px;font-weight:800">'+ic(bn[3])+bn[2]+'</div>';
+ h+='<div class="card"><div class="row">'+actTile(a)+'<div class="grow"><b style="font-size:18px">'+esc(a.full)+'</b><div class="small">'+dirName(r.dir)+' · '+dayOf(r.date)+', '+fd(r.date)+' · '+r.time+'</div></div>'+dirChip(r.dir)+'</div>'+
+  '<div class="small">'+ic('pin',14)+' '+(r.dir==='to'?'אזור איסוף':'אזור הורדה')+': '+esc(r.area)+'</div>'+
+  '<div class="note" style="background:var(--green-t);color:var(--green-d)">'+ic('users')+occ+' מתוך '+r.total+' תפוסים · '+seatsText(r.free)+'</div></div>';
+ /* DriverRideCompletionCard */
+ if(r.status==='completed') h+='<div class="card tint-green"><div class="row">'+ic('check',26)+'<div><b>ההסעה הסתיימה</b><div class="small">דיווח סיום נשמר ב-'+hhmm(new Date(r.doneAt))+'</div></div></div></div>';
+ else if(r.status!=='cancelled'){
+  var dis=w==='early';
+  h+='<div class="card"><b>סיימת את מסלול ההסעה?</b><button class="btn primary" data-a="askFinish" data-id="'+r.id+'" '+(dis?'disabled':'')+'>'+ic('flag')+'סיימתי את ההסעה</button><div class="small">'+(dis?'אפשר לדווח סיום משעת ההסעה.':'הדיווח אינו מאשר הגעה של ילדים. כל ילד מאושר בנפרד.')+'</div></div>';
+ }
+ /* ArrivalRoster */
+ h+='<div class="card"><div class="row sp"><h3 class="h2" style="margin:0">אישורי הגעה של הילדים ('+kids.length+')</h3>'+(kids.length&&kids.every(function(k){return arrInfo(r,k)})?chip('c-green','check','כל האישורים התקבלו'):'')+'</div>';
+ if(!kids.length) h+='<div class="small">עדיין אין ילדים מאושרים.</div>';
+ kids.forEach(function(kid){
+  var k=D.kids[kid];
+  h+='<div class="row" style="border-top:1px solid var(--line);padding-top:8px">'+kidAv(k,'g')+'<div class="grow"><b>'+esc(k.name)+(r.dchild===kid?' · ילד המסיע':'')+'</b></div>'+arrChip(r,kid)+'</div>';
+ });
+ h+='</div>';
+ var pend=pendingFor(u.id).filter(function(p){return p.r.id===r.id}).length;
+ if(pend) h+='<button class="btn line sm" data-a="reqs">בקשות ממתינות להסעה ('+pend+')</button>';
+ h+='<div class="card">'+[['חוג',a.full],['הורה מסיע',D.parents[r.driver].name],['תאריך ושעה',dayOf(r.date)+', '+fd(r.date)+', '+r.time]].map(function(x){return '<div class="kv"><span>'+x[0]+'</span><span>'+esc(x[1])+'</span></div>'}).join('')+'<div class="row wrap" style="padding-top:8px">'+chip('c-green','check','רישיון מאומת')+chip('c-green','check','ביטוח מאומת')+'</div></div>';
+ if(r.status==='open'||r.status==='full') h+='<button class="btn rej sm" data-a="askCancel" data-id="'+r.id+'">'+ic('trash')+'ביטול הסעה</button>';
+ return h+'</div></div>';
+}
+/* activities tab (P07) */
+function actRows(k,a){
+ var q=lastReq(k.id,a),st=q?reqState(q):null,own=D.rides.filter(function(r){return r.dchild===k.id&&r.act===a&&r.status!=='cancelled'});
+ var rows='';
+ ['to','from'].forEach(function(dir){
+  var r=null,state='missing';
+  if(q&&st!=='rejected'){r=ride(dir==='to'?q.out:q.back);state=(dir==='to'?q.so:q.sb)==='approved'?'ok':'wait'}
+  else if(own.length){var m=own.filter(function(x){return x.dir===dir})[0];if(m){r=m;state='ok'}}
+  var dn=dirName(dir);
+  if(state==='ok'){var d=D.parents[r.driver];rows+='<div class="row" style="background:var(--green-t);border-radius:12px;padding:8px 10px">'+dirChip(dir)+'<div class="grow"><b style="font-size:14px">נהג: '+esc(d.name)+'</b><div class="small">'+r.time+' · '+dayOf(r.date)+' '+fd(r.date)+'</div></div>'+chip('c-green','check','מאושר')+'</div>'}
+  else if(state==='wait') rows+='<div class="row" style="background:var(--yellow-t);border-radius:12px;padding:8px 10px">'+dirChip(dir)+'<div class="grow"><b style="font-size:14px">הבקשה ממתינה לאישור</b></div>'+chip('c-yellow','hourglass','בהמתנה')+'</div>';
+  else rows+='<div class="row" style="background:#EEF2F7;border-radius:12px;padding:8px 10px">'+dirChip(dir)+'<div class="grow"><b style="font-size:14px">עוד אין הסעה</b></div>'+chip('c-gray','x','חסר')+'</div>';
+ });
+ return rows;
+}
+function viewActs(){
+ var u=me(),k=kidOf(u);
+ var h=top('החוגים וההסעות שלי')+'<div class="page"><div class="pad" style="padding-top:14px"><div class="seg"><button class="'+(S.actTab==='week'?'on':'')+'" data-a="actTabSet" data-v="week">השבועי</button><button class="'+(S.actTab==='all'?'on':'')+'" data-a="actTabSet" data-v="all">כל החוגים</button></div>';
+ if(S.actTab==='all'){
+  Object.keys(D.acts).forEach(function(id){var a=act(id);h+='<div class="card"><div class="row">'+actTile(a)+'<div class="grow"><b style="font-size:16px">'+esc(a.full)+'</b><div class="small">'+a.days.map(function(d){return 'יום '+d}).join(', ')+' · '+a.start+'–'+a.end+'</div><div class="small">'+ic('pin',14)+' '+esc(a.place)+'</div></div></div></div>'});
+  return h+'</div></div>';
+ }
+ if(!k) h+='<div class="note">'+ic('info')+'אין ילד משויך לחשבון.</div>';
+ else k.acts.forEach(function(id){
+  var a=act(id),open=!S.fold[id];
+  h+='<div class="card"><button class="row sp" data-a="fold" data-id="'+id+'" style="background:none;border:0;padding:0;text-align:right;width:100%"><div class="row">'+actTile(a)+'<div><b style="font-size:17px">'+esc(a.full)+'</b><div class="small">'+a.days.map(function(d){return 'יום '+d}).join(', ')+' · '+a.start+' · '+esc(a.place)+'</div></div></div>'+ic(open?'up':'down',22)+'</button>'+(open?actRows(k,id):'')+
+   (open&&!activeReq(k.id,id)?'<button class="btn ok sm" data-a="goSearchAct" data-act="'+id+'">'+ic('search')+'חיפוש הסעה לחוג</button>':'')+'</div>';
+ });
+ if(u.drive){
+  var mine=D.rides.filter(function(r){return r.driver===u.id&&r.status!=='cancelled'&&r.status!=='completed'});
+  h+='<h3 class="h2">הסעות שאני מסיע/ה</h3>';
+  if(!mine.length)h+='<div class="card"><div class="empty"><span>אין הסעות פתוחות.</span></div></div>';
+  mine.forEach(function(r){h+='<button class="card" data-a="rideDetail" data-id="'+r.id+'"><div class="row">'+actTile(act(r.act))+'<div class="grow"><b>'+esc(act(r.act).full)+'</b><div class="small">'+dayOf(r.date)+' · '+fd(r.date)+' · '+r.time+'</div></div>'+dirChip(r.dir)+'</div></button>'});
+ }
+ return h+'</div></div>';
+}
+function viewProfile(){
+ var u=me(),k=kidOf(u);
+ var h=top('פרופיל')+'<div class="page"><div class="pad" style="padding-top:14px"><div class="card"><div class="row">'+pAv(u,'lg v')+'<div><b style="font-size:19px">'+esc(u.name)+'</b><div class="small">'+esc(u.phone)+' · '+esc(u.area)+'</div></div></div><div class="row wrap">'+chip(u.drive?'c-green':'c-gray',u.drive?'check':'x',u.drive?'מורשה להסיע':'לא מורשה להסיע')+chip(u.lic?'c-green':'c-gray',u.lic?'check':'x','רישיון '+(u.lic?'מאומת':'לא מאומת'))+chip(u.ins?'c-green':'c-gray',u.ins?'check':'x','ביטוח '+(u.ins?'מאומת':'לא מאומת'))+'</div>'+(u.drive?'':'<div class="note">'+ic('info')+'רק הורה שאושר על ידי המנהל יכול לפתוח הסעה.</div>')+'</div>';
+ if(k) h+='<div class="card"><h3 class="h2" style="margin:0">הילד שלי</h3><div class="row">'+kidAv(k,'g')+'<div><b>'+esc(k.name)+'</b><div class="small">'+k.acts.map(function(a){return esc(act(a).name)}).join(', ')+'</div></div></div></div>';
+ return h+'<button class="btn soft sm" data-a="logout">יציאה</button></div></div>';
+}
+/* ================= child ================= */
+function viewChildHome(){
+ var kid=D.kids.noam;
+ var h='<header class="top"><span class="ib sp0"></span><h1>'+logo()+'</h1><span class="ib sp0"></span></header><div class="page"><div class="greet il"><div><h2>היי '+esc(first(kid.name))+'! 👋</h2><p>אלה החוגים וההסעות שלך</p></div><img src="assets/kid-hero.svg" alt=""></div><div class="pad">';
+ var any=false;
+ kid.acts.forEach(function(id){
+  var a=act(id),q=lastReq(kid.id,id),st=q?reqState(q):null,own=D.rides.filter(function(r){return r.dchild===kid.id&&r.act===id&&r.status!=='cancelled'});
+  var tl=function(dir){
+   var r=null,state='missing';
+   if(q&&st!=='rejected'){r=ride(dir==='to'?q.out:q.back);state=(dir==='to'?q.so:q.sb)==='approved'?'ok':'wait'}
+   else if(own.length){var m=own.filter(function(x){return x.dir===dir})[0];if(m){r=m;state='ok'}}
+   return {r:r,state:state};
+  };
+  var t=tl('to'),f=tl('from'),assigned=t.state==='ok'&&f.state==='ok';
+  var ref=assigned&&t.r?t.r:null;
+  h+='<div class="card '+(assigned?'tint-green':'')+'"><div class="row">'+actTile(a)+'<div class="grow"><b style="font-size:19px">'+esc(a.name)+'</b><div class="small">'+(ref?dayOf(ref.date)+' · '+fd(ref.date)+' · '+ref.time:a.days.map(function(d){return 'יום '+d}).join(', ')+' · '+a.start)+'</div></div>'+chip(assigned?'c-green':'c-gray',assigned?'check':'x',assigned?'משובץ':'לא משובץ')+'</div>';
+  if(!assigned&&!(t.state==='ok'||f.state==='ok')&&!q) h+='<div class="small">עוד לא נשלחה בקשה. ההורה שלך שולח בקשה להסעה.</div>';
+  [['to',t],['from',f]].forEach(function(x){
+   var dir=x[0],s=x[1];
+   if(s.state==='ok'){
+    var r=s.r,d=D.parents[r.driver],ai=arrInfo(r,kid.id),w=windowState(r);
+    h+='<div class="dtile '+dir+'"><div class="row sp">'+dirChip(dir)+chip('c-green','check','מאושר')+'</div><div class="row sp"><div><div class="small">נוסעים עם</div><b>'+esc(d.name)+'</b></div><b class="t">'+r.time+'</b></div><div class="row wrap">'+statusChip(r)+'</div>';
+    if(ai) h+='<div>'+chip('c-green','check','הגעה אושרה '+(ai.who==='child'?'על ידך':'על ידי ההורה')+' · '+hhmm(ai.at))+'</div>';
+    else if(w==='open'&&r.status!=='cancelled') h+='<div><b>הגעת ליעד?</b></div><button class="btn ok" data-a="kidArrive" data-id="'+r.id+'">'+ic('check')+'הגעתי בבטחה</button>';
+    h+='</div>';
+   } else if(s.state==='wait') h+='<div class="dtile '+dir+'">'+'<div class="row sp">'+dirChip(dir)+chip('c-yellow','hourglass','בהמתנה')+'</div><span class="small">הבקשה ממתינה לאישור</span></div>';
+   else h+='<div class="dtile '+dir+'"><div class="row sp">'+dirChip(dir)+chip('c-gray','x','חסר')+'</div><span class="small">אין עדיין הסעה</span></div>';
+  });
+  h+='</div>';any=true;
+ });
+ return h+'</div><img class="foot-ill" src="assets/landscape.svg" alt=""></div>';
+}
+/* ================= chat (CH01) ================= */
+function chatCard(c,mi){
+ if(c.t==='ride'){var r=ride(c.id);return '<div class="card">'+rideCard(r,c.join?'<button class="btn primary sm" data-a="openJoin" data-id="'+r.id+'">בקשת הצטרפות</button>':'<div>'+statusChip(r)+'</div>')+'</div>'}
+ if(c.t==='preview'){
+  var f=c.f,u=me(),k=kidOf(u),kin=k&&k.acts.indexOf(f.act)>=0?k:null,a=act(f.act);
+  var h='<div class="card tint-blue"><div class="row"><b>טיוטת הסעה</b>'+chip('c-yellow','edit','לא נשמר עדיין')+'</div>'+
+   [['חוג',a.full],['כיוון',dirName(f.dir)],['תאריך',dayOf(f.date)+' · '+fd(f.date)],['שעה',f.time],[f.dir==='from'?'אזור הורדה':'אזור איסוף',f.area+(c.areaDef?' (לפי כתובת הילד)':'')],['מקומות',f.seats]].map(function(x){return '<div class="kv"><span>'+x[0]+'</span><span>'+esc(x[1])+'</span></div>'}).join('');
+  if(kin) h+='<div class="note" style="background:#fff;color:var(--green-d)">'+ic('user')+esc(first(kin.name))+' נוסף אוטומטית · 1 תפוס · '+(f.seats-1)+' פנויים</div>';
+  if(c.state==='open') h+='<button class="btn ok sm" data-a="chatConfirm" data-i="'+mi+'">'+ic('check')+'אישור ויצירה</button><div class="row2"><button class="btn line sm" data-a="chatEdit" data-i="'+mi+'">עריכת פרטים</button><button class="btn rej sm" data-a="chatCancel" data-i="'+mi+'">ביטול</button></div>';
+  else h+='<div>'+(c.state==='done'?chip('c-green','check','נשמרה'):chip('c-gray','x','בוטלה'))+'</div>';
+  return h+'</div>';
+ }
+ if(c.t==='result'){var r2=ride(c.id);return '<div class="card tint-green"><div class="row">'+ic('check',24)+'<div class="grow"><b>ההסעה נוצרה</b><div class="small">'+esc(act(r2.act).full)+' · '+dirName(r2.dir)+' · '+fd(r2.date)+' · '+r2.time+'</div></div></div><button class="btn line sm" data-a="rideDetail" data-id="'+r2.id+'">לצפייה בהסעה</button></div>'}
+ if(c.t==='actPrev'){
+  var h2='<div class="card tint-blue"><b>טיוטת חוג חדש</b>'+[['שם',c.f.name],['יום','יום '+c.f.day],['שעות',c.f.start+'–'+c.f.end]].map(function(x){return '<div class="kv"><span>'+x[0]+'</span><span>'+esc(x[1])+'</span></div>'}).join('');
+  if(c.state==='open') h2+='<button class="btn ok sm" data-a="chatConfirm" data-i="'+mi+'">'+ic('check')+'אישור ויצירה</button><button class="btn rej sm" data-a="chatCancel" data-i="'+mi+'">ביטול</button>';
+  else h2+='<div>'+(c.state==='done'?chip('c-green','check','נשמר'):chip('c-gray','x','בוטל'))+'</div>';
+  return h2+'</div>';
+ }
+ if(c.t==='annPrev') return '<div class="card tint-yellow"><b>טיוטת הודעה</b><div class="small">קהל יעד: '+(c.aud==='all'?'כל ההורים':esc(act(c.aud).full))+'</div><div class="small">ההודעה לא נשלחה. שליחה רק אחרי אישור במסך ההודעות.</div><button class="btn warn sm" data-a="chatAnn" data-i="'+mi+'">פתיחה בעריכה</button></div>';
+ if(c.t==='link') return '<button class="btn line sm" data-a="'+c.a+'">'+esc(c.l)+'</button>';
+ return '';
+}
+function viewChat(isTab){
+ var m=S.chat.msgs,h=(isTab?top('SafeRide Assistant',{right:'<span class="ib" style="color:#fff">'+ic('bot',24)+'</span>'}):top('SafeRide Assistant',{back:true}))+'<div class="page" style="display:flex;flex-direction:column"><div class="chat">';
+ h+='<div class="bub bot">היי! אני יכול לענות על שאלות על הסעות ולהכין פעולות. פעולות נשמרות רק אחרי אישור שלכם.</div>';
+ m.forEach(function(x,i){
+  if(x.from==='me') h+='<div class="bub me">'+esc(x.text)+'</div>';
+  else{
+   if(x.text) h+='<div class="bub bot">'+esc(x.text)+'</div>';
+   if(x.cards&&x.cards.length) h+='<div class="cards">'+x.cards.map(function(c){return chatCard(c,i)}).join('')+'</div>';
+  }
+ });
+ if(!m.length) h+='<div class="sugg">'+chipsFor().map(function(c){return '<button data-a="chatPrompt" data-t="'+esc(c)+'">'+esc(c)+'</button>'}).join('')+'</div>';
+ h+='</div><form class="composer" data-submit="chatSend"><input id="chatIn" class="in" autocomplete="off" placeholder="כתבו הודעה..." aria-label="הודעה לעוזר"><button type="submit" aria-label="שליחה">'+ic('send')+'</button></form></div>';
+ return h;
+}
+function missQ(f,u){
+ var k=kidOf(u);
+ if(!f.act)return 'לאיזה חוג ההסעה?';
+ if(!f.dir)return 'האם זו הסעת הלוך (אל החוג) או הסעת חזור (מהחוג)?';
+ if(!f.date)return 'באיזה יום ההסעה? אפשר לכתוב למשל "ביום שלישי".';
+ if(!f.time)return 'באיזו שעה?';
+ if(!f.seats)return 'כמה מקומות יש לילדים ברכב?';
+ return null;
+}
+function bot(text,cards){S.chat.msgs.push({from:'bot',text:text,cards:cards||[]})}
+function chatSend(t){
+ t=t.trim();if(!t)return;
+ var c=S.chat,u=me(),k=kind();
+ c.msgs.push({from:'me',text:t});
+ S.focus='chatIn';
+ if(k==='admin') return adminBot(t);
+ if(k==='kid') return kidBot(t);
+ /* continue a draft */
+ if(c.draft){
+  if(/^(ביטול|בטל|עזוב)/.test(t)){c.draft=null;bot('בסדר, ביטלתי את הטיוטה.');return}
+  var p=parseText(t);Object.keys(p.f).forEach(function(x){if(p.f[x])c.draft[x]=p.f[x]});
+  return draftStep();
+ }
+ var kid=kidOf(u);
+ /* other child names are not allowed */
+ var other=Object.keys(D.kids).filter(function(x){return (!kid||x!==kid.id)&&t.indexOf(first(D.kids[x].name))>=0})[0];
+ if(other){bot('אין לי הרשאה להציג מידע על ילדים אחרים. אפשר לשאול על הילד שלכם.');return}
+ if(/מי (מחזיר|לוקח|מסיע|מביא)/.test(t)){
+  if(!kid){bot('אין ילד משויך לחשבון.');return}
+  var dir=/מחזיר|חזור|חזרה/.test(t)?'from':/לוקח|מביא|הלוך/.test(t)?'to':null,p2=parseText(t);
+  var l=kidRides(kid.id).filter(function(r){return r.date>=dstr(now())&&(!dir||r.dir===dir)&&(!p2.f.act||r.act===p2.f.act)&&r.status!=='completed'});
+  if(!l.length){bot('אין כרגע הסעת '+(dir?dirName(dir):'')+' מאושרת ל'+first(kid.name)+'.',[{t:'link',a:'goSearch',l:'חיפוש הסעה'}]);return}
+  bot('הנה ההסעות המאושרות של '+first(kid.name)+':',l.slice(0,3).map(function(r){return {t:'ride',id:r.id}}));return;
+ }
+ if(/מצא|חפש|חיפוש/.test(t)&&/הסעה/.test(t)){
+  if(!kid){bot('אין ילד משויך לחשבון.');return}
+  var d2=/חזרה|חזור|מהחוג/.test(t)?'from':/הלוך|לחוג/.test(t)?'to':null,p3=parseText(t);
+  var rs=D.rides.filter(function(r){return eligible(r,u)&&kid.acts.indexOf(r.act)>=0&&r.area===kid.area&&!activeReq(kid.id,r.act)&&(!d2||r.dir===d2)&&(!p3.f.act||r.act===p3.f.act)});
+  if(!rs.length){bot('לא מצאתי הסעה פנויה שמתאימה. כשתיפתח הסעה חדשה היא תופיע בחיפוש.',[{t:'link',a:'goSearch',l:'למסך חיפוש הסעה'}]);return}
+  bot('מצאתי '+rs.length+' '+(rs.length===1?'הסעה פנויה':'הסעות פנויות')+'. בחירה שולחת רק בקשת הצטרפות, והמסיע הוא שמאשר.',rs.slice(0,3).map(function(r){return {t:'ride',id:r.id,join:true}}));return;
+ }
+ if(/פתח|פותח|אני מסיע|נוסע/.test(t)){
+  if(!u.drive){bot('רק הורה שהמנהל אישר להסיע יכול לפתוח הסעה.');return}
+  var p4=parseText(t);c.draft={act:null,dir:null,date:null,time:null,area:null,seats:null};
+  Object.keys(p4.f).forEach(function(x){if(p4.f[x])c.draft[x]=p4.f[x]});
+  if(!p4.ok){bot('בשמחה. ספרו לי: איזה חוג, באיזה יום ובאיזו שעה, הלוך או חזור, וכמה מקומות פנויים לילדים.');return}
+  return draftStep();
+ }
+ bot('אני יכול לעזור עם חיפוש הסעה, פתיחת הסעה ושאלות כמו "מי מחזיר את הילד?".');
+}
+function draftStep(){
+ var c=S.chat,u=me(),k=kidOf(u),f=c.draft;
+ if(!f.act&&k&&k.acts.length===1)f.act=k.acts[0];
+ var q=missQ(f,u);
+ if(q){bot(q);return}
+ var areaDef=!f.area;if(!f.area)f.area=k?k.area:AREAS[0];
+ var e=openErrs(f);
+ if(e.length){bot(e[0]+' אפשר לתקן בכתיבה או לכתוב "ביטול".');if(/מועד/.test(e[0])){f.date=null;f.time=null}return}
+ S.chat.draft=null;
+ bot('הכנתי טיוטה. בדקו ואשרו:',[{t:'preview',f:JSON.parse(JSON.stringify(f)),state:'open',areaDef:areaDef}]);
+}
+function kidBot(t){
+ var kid=D.kids.noam;
+ if(/מי (לוקח|מסיע|מחזיר|מביא)|היום|מתי/.test(t)){
+  var l=kidRides(kid.id).filter(function(r){return r.date>=dstr(now())}).slice(0,3);
+  if(!l.length){bot('אין לך הסעה מאושרת בקרוב.');return}
+  bot('הנה ההסעות שלך:',l.map(function(r){return {t:'ride',id:r.id}}));return;
+ }
+ bot('אני יכול לענות רק על ההסעות שלך, למשל "מי לוקח אותי היום?". פעולות ניהול לא זמינות כאן.');
+}
+function adminBot(t){
+ var p=parseText(t);
+ if(/כמה/.test(t)&&/ילדים/.test(t)){
+  var l=Object.keys(D.kids).filter(function(x){return !p.f.act||D.kids[x].acts.indexOf(p.f.act)>=0}).length;
+  bot('רשומים '+l+' ילדים'+(p.f.act?' ל'+act(p.f.act).full:'')+'.');return;
+ }
+ if(/כמה/.test(t)&&/הורים/.test(t)){bot('רשומים '+Object.keys(D.parents).length+' הורים.');return}
+ if(/הוסף חוג|חוג חדש/.test(t)){
+  var nm=(t.match(/חוג\s+([^\s,]+)/)||[])[1],dm=t.match(/(?:יום\s|ב)(ראשון|שני|שלישי|רביעי|חמישי|שישי)/);
+  if(!nm||nm==='חדש'){bot('איך קוראים לחוג, ובאיזה יום הוא מתקיים?');return}
+  bot('הכנתי טיוטה. שעות ברירת מחדל ניתנות לעריכה אחר כך.',[{t:'actPrev',state:'open',f:{name:nm,day:dm?dm[1]:'שני',start:'17:00',end:'18:30'}}]);return;
+ }
+ if(/הודעה/.test(t)){bot('פתחתי טיוטה. שום דבר לא נשלח לפני אישור שלך.',[{t:'annPrev',aud:p.f.act||'all'}]);return}
+ bot('אפשר לשאול למשל "כמה ילדים רשומים לכדורסל?" או לבקש "הוסף חוג שחייה ביום רביעי".');
+}
+/* ================= admin ================= */
+function admStats(){
+ var up=D.rides.filter(function(r){return (r.status==='open'||r.status==='full')&&r.date>=dstr(now())}).length;
+ var wait=Object.keys(D.parents).filter(function(k){return admState(D.parents[k])==='wait'}).length;
+ return {kids:Object.keys(D.kids).length,parents:Object.keys(D.parents).length,acts:Object.keys(D.acts).length,up:up,wait:wait,sched:D.ann.filter(function(a){return a.status==='sched'}).length};
+}
+function admState(p){return p.drive?'ok':p.ver?'no':'wait'}
+function viewDash(){
+ var s=admStats();
+ var h=topHome().replace(/<button class="ib" data-a="notifs"[\s\S]*?<\/button>/,'<span class="ib sp0"></span>')+'<div class="page"><div class="greet il"><div><h2>שלום, מנהל מערכת 👋</h2><p>סקירה כללית של פעילות המערכת</p></div><img class="wide" src="assets/admin-laptop.svg" alt=""></div><div class="pad">';
+ h+='<div class="stats">'+
+  '<button class="stat s-green" data-a="admGo" data-v="kids">'+ic('user')+'<b>'+s.kids+'</b><span>ילדים</span></button>'+
+  '<button class="stat s-blue" data-a="admGo" data-v="parents">'+ic('users')+'<b>'+s.parents+'</b><span>הורים</span></button>'+
+  '<button class="stat s-orange" data-a="admGo" data-v="acts">'+ic('ball')+'<b>'+s.acts+'</b><span>חוגים פעילים</span></button>'+
+  '<div class="stat s-violet">'+ic('cal')+'<b>'+s.up+'</b><span>הסעות קרובות</span></div>'+
+  '<button class="stat s-yellow" data-a="admGo" data-v="parents">'+ic('hourglass')+'<b>'+s.wait+'</b><span>ממתינים לאימות</span></button>'+
+  '<button class="stat s-red" data-a="admGo" data-v="ann">'+ic('mega')+'<b>'+s.sched+'</b><span>הודעות מתוזמנות</span></button></div>';
+ h+=assistCard(chipsFor()).replace('data-a="openChat"','data-a="openChat"');
+ h+='<h3 class="h2">הסעות קרובות</h3>';
+ var l=D.rides.filter(function(r){return (r.status==='open'||r.status==='full')&&r.date>=dstr(now())}).sort(function(a,b){return rdt(a)-rdt(b)}).slice(0,5);
+ if(!l.length)h+='<div class="card"><div class="empty"><span>אין הסעות קרובות.</span></div></div>';
+ else h+='<div class="card" style="padding:4px 14px">'+l.map(function(r,i){return '<div class="row sp" style="padding:10px 0;'+(i?'border-top:1px solid var(--line)':'')+'"><div class="row"><b>'+r.time+'</b><span>'+esc(act(r.act).name)+' · '+fd(r.date)+'</span></div>'+dirChip(r.dir)+'</div>'}).join('')+'</div>';
+ return h+'</div></div>';
+}
+function searchBox(key,ph){return '<div class="search">'+ic('search')+'<input class="in" data-search="'+key+'" placeholder="'+ph+'" value="'+esc(S.q[key]||'')+'" aria-label="'+ph+'"></div>'}
+function parentsList(){
+ var q=(S.q.parents||'').trim(),l=Object.keys(D.parents).map(function(k){return D.parents[k]}).filter(function(p){return !q||(p.name+p.phone+p.area).indexOf(q)>=0});
+ var h='<div class="small" style="font-weight:700">נמצאו '+l.length+' הורים</div>';
+ l.forEach(function(p){
+  var s=admState(p),kn=Object.keys(D.kids).filter(function(k){return D.kids[k].parent===p.id}).length;
+  h+='<button class="card" data-a="admOpen" data-v="parentForm" data-id="'+p.id+'"><div class="row">'+pAv(p,s==='ok'?'v':'y')+'<div class="grow"><b>'+esc(p.name)+'</b><div class="small">'+esc(p.phone)+' · '+esc(p.area)+'</div><div class="small">'+kn+' ילדים</div></div>'+chip(s==='ok'?'c-green':s==='wait'?'c-yellow':'c-red',s==='ok'?'check':s==='wait'?'hourglass':'x',s==='ok'?'מאומת':s==='wait'?'ממתין לאימות':'לא מאושר')+'</div></button>';
+ });
+ return h;
+}
+function kidsList(){
+ var q=(S.q.kids||'').trim(),l=Object.keys(D.kids).map(function(k){return D.kids[k]}).filter(function(k){var p=D.parents[k.parent];return !q||(k.name+(p?p.name:'')+k.acts.map(function(a){return act(a).name}).join(' ')+k.area).indexOf(q)>=0});
+ var h='<div class="small" style="font-weight:700">נמצאו '+l.length+' ילדים</div>';
+ l.forEach(function(k){
+  var p=D.parents[k.parent],a=act(k.acts[0]);
+  h+='<button class="card '+(k.active?'tint-green':'tint-orange')+'" data-a="admOpen" data-v="kidForm" data-id="'+k.id+'"><div class="row">'+kidAv(k)+'<div class="grow"><b>'+esc(k.name)+'</b><div class="small">הורה: '+esc(p?p.name:'לא משויך')+' · חוג: '+k.acts.map(function(x){return esc(act(x).name)}).join(', ')+'</div><div class="small">שכונה: '+esc(k.area)+'</div></div>'+chip(k.active?'c-green':'c-orange',k.active?'check':'x',k.active?'פעיל':'לא פעיל')+'</div></button>';
+ });
+ return h;
+}
+function actsList(){
+ var q=(S.q.acts||'').trim(),l=Object.keys(D.acts).map(function(k){return D.acts[k]}).filter(function(a){return !q||(a.name+a.place).indexOf(q)>=0});
+ var h='<div class="small" style="font-weight:700">נמצאו '+l.length+' חוגים פעילים</div>';
+ l.forEach(function(a){
+  var n=Object.keys(D.kids).filter(function(k){return D.kids[k].acts.indexOf(a.id)>=0}).length;
+  h+='<button class="card" data-a="admOpen" data-v="actForm" data-id="'+a.id+'"><div class="row">'+actTile(a)+'<div class="grow"><b style="font-size:16px">'+esc(a.full)+'</b><div class="small">'+ic('pin',14)+' '+esc(a.place)+'</div><div class="small">'+a.days.map(function(d){return 'יום '+d}).join(', ')+' · '+a.start+'–'+a.end+' · '+n+' משתתפים</div></div>'+chip('c-green','check','פעיל')+'</div></button>';
+ });
+ return h;
+}
+function viewAdmList(key,title,ph,newLabel,form,listFn){
+ return top(title)+'<div class="page"><div class="pad" style="padding-top:14px">'+searchBox(key,ph)+'<div id="listbox" class="pad" style="padding:0">'+listFn()+'</div><button class="btn primary" data-a="admOpen" data-v="'+form+'" data-id="">'+ic('plus')+newLabel+'</button></div></div>';
+}
+function fld(label,icon,name,o){
+ o=o||{};var v=S.form[name]==null?'':S.form[name],e=S.errs[name],id='f_'+name,req=o.req?' <span class="req">*</span>':'';
+ var inp;
+ if(o.sel) inp='<select id="'+id+'" class="in'+(e?' bad':'')+'" data-f="'+name+'">'+(o.ph?'<option value="">'+o.ph+'</option>':'')+o.sel.map(function(x){var val=Array.isArray(x)?x[0]:x,lb=Array.isArray(x)?x[1]:x;return '<option value="'+esc(val)+'" '+(String(v)===String(val)?'selected':'')+'>'+esc(lb)+'</option>'}).join('')+'</select>';
+ else if(o.area) inp='<textarea id="'+id+'" class="in'+(e?' bad':'')+'" rows="3" data-f="'+name+'">'+esc(v)+'</textarea>';
+ else inp='<input id="'+id+'" class="in'+(e?' bad':'')+'" type="'+(o.type||'text')+'" data-f="'+name+'" value="'+esc(v)+'" '+(o.ph?'placeholder="'+esc(o.ph)+'"':'')+'>';
+ return '<div class="field"><label for="'+id+'">'+ic(icon)+label+req+'</label>'+inp+(e?'<div class="err" role="alert">'+ic('alert',14)+e+'</div>':'')+'</div>';
+}
+function formFoot(delId){
+ return '<div class="row2"><button class="btn line" data-a="back">ביטול</button><button class="btn ok" data-a="formSave">'+ic('check')+'שמירה</button></div>'+(delId?'<button class="btn rej sm" data-a="formDel">'+ic('trash')+'מחיקה</button>':'');
+}
+function viewParentForm(){
+ var id=S.view.id,f=S.form;
+ var ks=id?Object.keys(D.kids).filter(function(k){return D.kids[k].parent===id}):[];
+ var h=top(id?'עריכת הורה':'הוספת הורה',{back:true})+'<div class="page"><div class="pad" style="padding-top:14px">';
+ h+=fld('שם מלא','user','name',{req:1})+fld('מספר טלפון','phone','phone',{req:1,type:'tel'})+fld('אימייל','mail','email',{type:'email'})+fld('כתובת','home','addr',{req:1})+fld('שכונה','pin','area',{req:1,sel:AREAS});
+ if(id){
+  h+='<div class="card tint-blue"><span class="lbl">'+ic('users')+'ילדים משויכים להורה</span><div class="chips">'+(ks.length?ks.map(function(k){return '<span class="pill on">'+esc(D.kids[k].name)+'</span>'}).join(''):'<span class="small">אין ילדים משויכים</span>')+'</div><div class="small">שיוך ילד נעשה במסך הילד.</div></div>';
+ }
+ h+='<div class="card"><span class="lbl">'+ic('shield')+'אימות והרשאות</span>'+
+  fld('מורשה להסיע','car','drive',{sel:[['1','כן'],['0','לא']]})+fld('רישיון','shield','lic',{sel:[['1','מאומת'],['0','לא מאומת']]})+fld('ביטוח','shield','ins',{sel:[['1','מאומת'],['0','לא מאומת']]})+fld('בדיקת רקע','shield','bg',{sel:[['1','מאומת'],['0','לא מאומת']]})+'</div>';
+ return h+formFoot(id)+'</div></div>';
+}
+function viewKidForm(){
+ var id=S.view.id,f=S.form;
+ var h=top(id?'עריכת ילד':'הוספת ילד',{back:true})+'<div class="page"><div class="pad" style="padding-top:14px">';
+ h+=fld('שם הילד/ה','user','name',{req:1})+fld('הורה משויך','user','parent',{req:1,ph:'בחרו הורה',sel:Object.keys(D.parents).map(function(k){return [k,D.parents[k].name]})});
+ h+='<div class="field"><span class="lbl">'+ic('ball')+'חוגים <span class="req">*</span></span><div class="chips">'+Object.keys(D.acts).map(function(a){return '<button class="pill '+(f.acts.indexOf(a)>=0?'on':'')+'" data-a="toggle" data-f="acts" data-v="'+a+'">'+(f.acts.indexOf(a)>=0?ic('check',16):'')+esc(act(a).name)+'</button>'}).join('')+'</div>'+(S.errs.acts?'<div class="err" role="alert">'+ic('alert',14)+S.errs.acts+'</div>':'')+'</div>';
+ h+=fld('כתובת','home','addr',{req:1})+fld('שכונה','pin','area',{req:1,sel:AREAS})+fld('הערות להסעה','chat','notes',{area:1,ph:''});
+ h+='<div class="field"><span class="lbl">סטטוס</span><div class="seg"><button class="'+(f.active?'on g':'')+'" data-a="setF" data-f="active" data-v="1">פעיל</button><button class="'+(!f.active?'on o':'')+'" data-a="setF" data-f="active" data-v="0">לא פעיל</button></div></div>';
+ return h+formFoot(id)+'</div></div>';
+}
+function viewActForm(){
+ var id=S.view.id,f=S.form;
+ var h=top(id?'עריכת חוג':'הוספת חוג',{back:true})+'<div class="page"><div class="pad" style="padding-top:14px">';
+ h+=fld('שם החוג','ball','name',{req:1})+fld('מקום / אולם','pin','place',{req:1});
+ h+='<div class="field"><span class="lbl">'+ic('cal')+'ימים בשבוע <span class="req">*</span></span><div class="chips">'+DAYS.slice(0,6).map(function(d){return '<button class="pill '+(f.days.indexOf(d)>=0?'on':'')+'" data-a="toggle" data-f="days" data-v="'+d+'">'+d+'</button>'}).join('')+'</div>'+(S.errs.days?'<div class="err" role="alert">'+ic('alert',14)+S.errs.days+'</div>':'')+'</div>';
+ h+='<div class="row2">'+fld('שעת התחלה','clock','start',{req:1,type:'time'})+fld('שעת סיום','clock','end',{req:1,type:'time'})+'</div>';
+ h+=fld('אייקון','spark','icon',{sel:[['ball','כדור'],['person','ספורט'],['palette','אמנות'],['music','מוזיקה']]});
+ return h+formFoot(id)+'</div></div>';
+}
+function viewAnn(){
+ var f=S.form||(S.form=annInit());
+ var h=top('הודעות חשובות')+'<div class="page"><div class="pad" style="padding-top:14px"><div class="seg"><button class="'+(S.annTab==='new'?'on':'')+'" data-a="annTabSet" data-v="new">יצירת הודעה חדשה</button><button class="'+(S.annTab==='sent'?'on':'')+'" data-a="annTabSet" data-v="sent">הודעות שנשלחו</button></div>';
+ if(S.annTab==='new'){
+  h+=fld('כותרת ההודעה','mega','title',{req:1})+fld('קהל יעד','users','aud',{req:1,sel:[['all','כל ההורים']].concat(Object.keys(D.acts).map(function(a){return [a,'הורים לחוג '+act(a).name]}))})+fld('תוכן ההודעה','chat','body',{req:1,area:1});
+  h+='<div class="row2">'+fld('תאריך שליחה','cal','date',{type:'date'})+fld('שעה','clock','time',{type:'time'})+'</div>';
+  h+='<div class="row2"><button class="btn warn" data-a="annAsk" data-v="sched">'+ic('clock')+'תזמון לשליחה</button><button class="btn ok" data-a="annAsk" data-v="now">'+ic('send')+'שליחה עכשיו</button></div>';
+ } else {
+  h+='<h3 class="h2">הודעות אחרונות</h3>';
+  if(!D.ann.length)h+='<div class="card"><div class="empty"><span>אין הודעות.</span></div></div>';
+  D.ann.slice().reverse().forEach(function(a){h+='<div class="card"><div class="row sp"><b>'+esc(a.title)+'</b>'+chip(a.status==='sent'?'c-green':'c-yellow',a.status==='sent'?'check':'clock',a.status==='sent'?'נשלחה':'מתוזמנת')+'</div><div class="small">'+(a.aud==='all'?'כל ההורים':esc(act(a.aud).full))+' · '+esc(a.when)+'</div><div style="font-size:14px">'+esc(a.body)+'</div></div>'});
+ }
+ return h+'</div></div>';
+}
+function annInit(){return {title:'',aud:'all',body:'',date:'',time:''}}
+function audCount(aud){
+ if(aud==='all')return Object.keys(D.parents).length;
+ var s={};Object.keys(D.kids).forEach(function(k){if(D.kids[k].acts.indexOf(aud)>=0)s[D.kids[k].parent]=1});return Object.keys(s).length;
+}
+/* form open / save */
+function openForm(name,id){
+ S.errs={};
+ if(name==='parentForm'){var p=id?D.parents[id]:null;S.form=p?{name:p.name,phone:p.phone,email:p.email,addr:p.addr,area:p.area,drive:p.drive?'1':'0',lic:String(p.lic),ins:String(p.ins),bg:String(p.bg)}:{name:'',phone:'',email:'',addr:'',area:AREAS[0],drive:'0',lic:'0',ins:'0',bg:'0'}}
+ if(name==='kidForm'){var k=id?D.kids[id]:null;S.form=k?{name:k.name,parent:k.parent||'',acts:k.acts.slice(),addr:k.addr,area:k.area,notes:k.notes,active:k.active}:{name:'',parent:'',acts:[],addr:'',area:AREAS[0],notes:'',active:true}}
+ if(name==='actForm'){var a=id?D.acts[id]:null;S.form=a?{name:a.name,place:a.place,days:a.days.slice(),start:a.start,end:a.end,icon:a.icon}:{name:'',place:'',days:[],start:'17:00',end:'18:30',icon:'ball'}}
+ S.view={name:name,id:id||null};render();
+}
+function saveForm(){
+ var v=S.view,f=S.form,e={};
+ if(v.name==='parentForm'){
+  if(!f.name.trim())e.name='חסר: שם מלא';
+  if(!/^0\d{1,2}-?\d{7}$/.test(f.phone.trim()))e.phone='חסר: מספר טלפון תקין';
+  if(f.email&&!/^\S+@\S+\.\S+$/.test(f.email))e.email='כתובת אימייל לא תקינה';
+  if(!f.addr.trim())e.addr='חסר: כתובת';
+  if(Object.keys(e).length){S.errs=e;render();return}
+  var p=v.id?D.parents[v.id]:null;
+  if(!p){D.seq++;p=D.parents['p'+D.seq]={id:'p'+D.seq,child:null,ver:null};}
+  p.name=f.name.trim();p.ini=mkIni(p.name);p.phone=f.phone.trim();p.email=f.email.trim();p.addr=f.addr.trim();p.area=f.area;p.drive=f.drive==='1';p.lic=+f.lic;p.ins=+f.ins;p.bg=+f.bg;p.ver='4.11.2026';
+  toast('נשמר. '+p.name+' מופיע/ה כ'+({ok:'מאומת',no:'לא מאושר',wait:'ממתין לאימות'})[admState(p)]);
+ }
+ if(v.name==='kidForm'){
+  if(!f.name.trim())e.name='חסר: שם הילד/ה';
+  if(!f.parent)e.parent='חסר: הורה משויך';
+  if(!f.acts.length)e.acts='חסר: לפחות חוג אחד';
+  if(!f.addr.trim())e.addr='חסר: כתובת';
+  if(Object.keys(e).length){S.errs=e;render();return}
+  var k=v.id?D.kids[v.id]:null,oldP=k?k.parent:null;
+  if(!k){D.seq++;k=D.kids['k'+D.seq]={id:'k'+D.seq}}
+  k.name=f.name.trim();k.ini=mkIni(k.name);k.parent=f.parent;k.acts=f.acts.slice();k.addr=f.addr.trim();k.area=f.area;k.notes=f.notes;k.active=!!f.active;
+  syncChild(k.parent);if(oldP&&oldP!==k.parent)syncChild(oldP);
+  toast('נשמר: '+k.name);
+ }
+ if(v.name==='actForm'){
+  if(!f.name.trim())e.name='חסר: שם החוג';
+  if(!f.place.trim())e.place='חסר: מקום';
+  if(!f.days.length)e.days='חסר: לפחות יום אחד';
+  if(!f.start)e.start='חסר: שעת התחלה';
+  if(!f.end)e.end='חסר: שעת סיום';
+  else if(f.start&&f.end<=f.start)e.end='שעת הסיום חייבת להיות אחרי ההתחלה';
+  if(Object.keys(e).length){S.errs=e;render();return}
+  var a=v.id?D.acts[v.id]:null;
+  if(!a){D.seq++;a=D.acts['a'+D.seq]={id:'a'+D.seq,tone:'green'}}
+  a.name=f.name.trim();a.full='חוג '+a.name;a.place=f.place.trim();a.days=f.days.slice();a.start=f.start;a.end=f.end;a.icon=f.icon;
+  toast('נשמר: '+a.full);
+ }
+ S.view=null;S.form=null;S.errs={};render();
+}
+function delForm(){
+ var v=S.view;
+ if(v.name==='parentForm'){delete D.parents[v.id];Object.keys(D.kids).forEach(function(k){if(D.kids[k].parent===v.id)D.kids[k].parent=null})}
+ if(v.name==='kidForm'){var p=D.kids[v.id].parent;delete D.kids[v.id];syncChild(p)}
+ if(v.name==='actForm'){delete D.acts[v.id];Object.keys(D.kids).forEach(function(k){D.kids[k].acts=D.kids[k].acts.filter(function(a){return a!==v.id})})}
+ S.view=null;S.form=null;toast('נמחק');
+}
+/* ================= modals ================= */
+function modalHtml(){
+ var m=S.modal;if(!m)return '';
+ var wrap=function(i){return '<div class="modal" role="dialog" aria-modal="true"><div>'+i+'</div></div>'};
+ if(m.t==='cancel'){return wrap('<div class="row"><div class="av lg" style="background:var(--red-t);color:var(--red-d)">'+ic('x',28)+'</div><h2 style="margin:0;font-size:20px">לבטל את ההסעה?</h2></div><div class="tag">הביטול ישחרר את המקומות ויבטל גם את האישור הזמני של הילדים בכיוון השני.</div><button class="btn danger sm" data-a="doCancel" data-id="'+m.id+'">אישור ביטול ההסעה</button><button class="btn soft sm" data-a="closeModal">חזרה</button>')}
+ if(m.t==='finish'){return wrap('<div class="row"><div class="at t-green">'+ic('flag')+'</div><h2 style="margin:0;font-size:20px">לסיים את ההסעה?</h2></div><div class="tag">דיווח הסיום יישמר ויעודכנו ההורים הרלוונטיים. הוא אינו מאשר הגעה של ילדים, ואי אפשר לדווח שוב.</div><button class="btn primary sm" data-a="doFinish" data-id="'+m.id+'">אישור, סיימתי את ההסעה</button><button class="btn soft sm" data-a="closeModal">חזרה</button>')}
+ if(m.t==='ann'){var n=audCount(S.form.aud);return wrap('<h2 style="margin:0;font-size:20px">'+(m.mode==='now'?'לשלוח את ההודעה עכשיו?':'לתזמן את ההודעה?')+'</h2><div class="tag">"'+esc(S.form.title)+'" תישלח ל-'+n+' הורים'+(m.mode==='sched'?' ב-'+esc(S.form.date)+' '+esc(S.form.time):'')+'.</div><button class="btn ok sm" data-a="annDo" data-v="'+m.mode+'">'+(m.mode==='now'?'אישור ושליחה':'אישור ותזמון')+'</button><button class="btn soft sm" data-a="closeModal">חזרה</button>')}
+ return '';
+}
+/* ================= render ================= */
+function navItems(){
+ var k=kind();
+ if(k==='admin')return [['dash','דשבורד','home'],['parents','הורים','users'],['kids','ילדים','user'],['acts','חוגים','cal'],['ann','הודעות','mega']];
+ if(k==='kid')return [['home','בית','home'],['chat','עוזר AI','chat']];
+ return [['home','בית','home'],['acts','חוגים','cal'],['chat','עוזר AI','chat'],['profile','פרופיל','user']];
+}
+function viewRouter(){
+ var v=S.view;
+ switch(v.name){
+  case 'join':return viewJoin();case 'detail':return viewDetail();case 'new':return viewNewRide();
+  case 'search':return viewSearch();case 'myrides':return viewMyRides();case 'reqs':return viewReqs();case 'notifs':return viewNotifs();
+  case 'chat':return viewChat(false);case 'parentForm':return viewParentForm();case 'kidForm':return viewKidForm();case 'actForm':return viewActForm();
+ }
+ return '';
+}
+function tabRouter(){
+ var k=kind(),t=S.tab;
+ if(k==='admin'){
+  if(t==='dash')return viewDash();
+  if(t==='parents')return viewAdmList('parents','ניהול הורים','חיפוש לפי שם, טלפון או שכונה','הורה חדש','parentForm',parentsList);
+  if(t==='kids')return viewAdmList('kids','ניהול ילדים','חיפוש לפי שם, הורה, חוג או שכונה','ילד חדש','kidForm',kidsList);
+  if(t==='acts')return viewAdmList('acts','ניהול חוגים','חיפוש לפי שם חוג או מקום','חוג חדש','actForm',actsList);
+  return viewAnn();
+ }
+ if(k==='kid')return t==='chat'?viewChat(true):viewChildHome();
+ if(t==='acts')return viewActs();if(t==='chat')return viewChat(true);if(t==='profile')return viewProfile();
+ return viewHome();
+}
+function render(){
+ var inner=S.view?viewRouter():tabRouter(),items=navItems();
+ var sig=(S.view?S.view.name+(S.view.id||''):S.tab)+S.role;
+ var roleLbl=(ROLES.filter(function(r){return r.k===S.role})[0]||{}).label||'';
+ var tb=!S.tbOpen?'<div class="testbar slim"><b>אבטיפוס · נתוני דמה</b><span class="grow tbrole">'+esc(roleLbl)+'</span><button data-a="tbToggle" aria-expanded="false">החלפה</button></div>':'<div class="testbar"><b>אבטיפוס · נתוני דמה</b><button data-a="tbToggle" aria-expanded="true">סגירה</button><label>תפקיד <select id="selRole" aria-label="תפקיד">'+ROLES.map(function(r){return '<option value="'+r.k+'" '+(S.role===r.k?'selected':'')+'>'+r.label+'</option>'}).join('')+'</select></label><label>שעון <select id="selClock" aria-label="שעון המערכת">'+CLOCKS.map(function(c){return '<option value="'+c.k+'" '+(S.clock===c.k?'selected':'')+'>'+c.label+'</option>'}).join('')+'</select></label><button id="btnReset">איפוס</button></div>';
+ var nav=S.view?'':'<nav class="nav" aria-label="ניווט"><div>'+items.map(function(t){return '<button class="'+(S.tab===t[0]?'on':'')+'" data-a="tab" data-v="'+t[0]+'" '+(S.tab===t[0]?'aria-current="page"':'')+'>'+ic(t[2])+t[1]+'</button>'}).join('')+'</div></nav>';
+ var keepSf=document.querySelector('[data-search]'),qv=keepSf?keepSf.value:null;
+ root.innerHTML=tb+'<main class="shell"><div class="screen">'+inner+'</div></main>'+nav+modalHtml()+(S.toast?'<div class="toast" role="status">'+esc(S.toast)+'</div>':'');
+ if(sig!==S.sig){S.sig=sig;window.scrollTo(0,0)}
+ if(S.view&&S.view.name==='chat'||(!S.view&&S.tab==='chat')){if(S.chatScroll){window.scrollTo(0,document.body.scrollHeight);S.chatScroll=false}}
+ if(S.focus){var el=document.getElementById(S.focus);if(el)el.focus();S.focus=null}
+}
+function refreshList(key){
+ var box=document.getElementById('listbox');if(!box)return;
+ box.innerHTML=key==='parents'?parentsList():key==='kids'?kidsList():actsList();
+}
+/* ================= events ================= */
+function after(){render()}
+var H={
+ tbToggle:function(){S.tbOpen=!S.tbOpen;render()},
+ tab:function(d){S.tab=d.v;S.view=null;S.form=null;if(d.v==='ann'){S.form=annInit()}render()},
+ back:function(){S.view=null;S.form=null;S.errs={};if(S.tab==='ann'&&!S.form)S.form=annInit();render()},
+ notifs:function(){go({name:'notifs'})},
+ goSearch:function(){go({name:'search'})},
+ goSearchAct:function(d){S.sf={dir:'all',act:d.act,area:''};go({name:'search'})},
+ myrides:function(){go({name:'myrides'})},
+ reqs:function(){go({name:'reqs'})},
+ actsTab:function(){S.tab='acts';S.view=null;render()},
+ openJoin:function(d){startJoin(d.id)},
+ newReq:function(d){var u=me(),kid=kidOf(u);var r=D.rides.filter(function(x){return x.act===d.act&&eligible(x,u)})[0]||D.rides.filter(function(x){return x.act===d.act&&x.driver===u.id&&x.dchild===kid.id})[0];if(!r){toast('אין כרגע הסעות פנויות בחוג הזה');return}startJoin(r.id)},
+ pick:function(d){S.view.j[d.k]=d.id;render()},
+ sendJoin:function(){sendJoin()},
+ sfDir:function(d){S.sf.dir=d.v;render()},
+ hist:function(d){S.hist=d.v==='1';render()},
+ newRide:function(){S.open=initOpen();go({name:'new'})},
+ oDir:function(d){S.open.dir=d.v;render()},
+ seat:function(d){S.open.seats=Math.max(1,Math.min(8,S.open.seats+(+d.d)));render()},
+ saveRide:function(){var o=S.open;if(openErrs(o).length)return;var r=createRide(o);S.view={name:'detail',id:r.id};toast('ההסעה נשמרה ומופיעה בחיפוש הסעה');},
+ rideDetail:function(d){go({name:'detail',id:d.id})},
+ decide:function(d){decide(d.q,d.d,d.ok==='1');render()},
+ askFinish:function(d){S.modal={t:'finish',id:d.id};render()},
+ doFinish:function(d){var r=ride(d.id);if(r.status==='completed'){S.modal=null;render();return}r.status='completed';r.doneAt=now().toISOString();S.modal=null;toast('דיווח סיום ההסעה נשמר. ההורים הרלוונטיים עודכנו.')},
+ askCancel:function(d){S.modal={t:'cancel',id:d.id};render()},
+ doCancel:function(d){cancelRide(ride(d.id));S.modal=null;S.view={name:'myrides'};S.hist=true;toast('ההסעה בוטלה והמקומות שוחררו')},
+ closeModal:function(){S.modal=null;render()},
+ guardArrive:function(d){var r=ride(d.id),k=kidOf(me());if(!k||approvedKids(r).indexOf(k.id)<0)return;if(windowState(r)!=='open'){toast('אפשר לאשר משעת ההסעה ועד סוף היום.');return}r.arr[k.id]=r.arr[k.id]||{};if(!r.arr[k.id].guardian_at)r.arr[k.id].guardian_at=now().toISOString();toast('אישור ההגעה נשמר')},
+ kidArrive:function(d){var r=ride(d.id);if(approvedKids(r).indexOf('noam')<0)return;if(windowState(r)!=='open'){toast('אפשר לאשר משעת ההסעה ועד סוף היום.');return}r.arr.noam=r.arr.noam||{};if(!r.arr.noam.child_at)r.arr.noam.child_at=now().toISOString();toast('אישור ההגעה נשמר')},
+ actTabSet:function(d){S.actTab=d.v;render()},
+ fold:function(d){S.fold[d.id]=!S.fold[d.id];render()},
+ logout:function(){S.role='michal';S.tab='home';S.view=null;render()},
+ openChat:function(){if(isAdmin()){S.view={name:'chat'};render()}else{S.tab='chat';S.view=null;S.chatScroll=true;S.focus='chatIn';render()}},
+ chatPrompt:function(d){H.openChat();chatSend(d.t);S.chatScroll=true;render()},
+ chatConfirm:function(d){
+  var c=S.chat.msgs[+d.i].cards[0];if(c.state!=='open')return;
+  if(c.t==='preview'){var e=openErrs(c.f);if(e.length){c.state='cancelled';bot('לא נשמר: '+e[0]);S.chatScroll=true;render();return}var r=createRide(c.f);c.state='done';bot('',[{t:'result',id:r.id}])}
+  if(c.t==='actPrev'){D.seq++;var id='a'+D.seq;D.acts[id]={id:id,name:c.f.name,full:'חוג '+c.f.name,place:'יעודכן',days:[c.f.day],start:c.f.start,end:c.f.end,icon:'ball',tone:'green'};c.state='done';bot('החוג נוצר. אפשר להשלים פרטים במסך החוגים.',[{t:'link',a:'goActs',l:'למסך החוגים'}])}
+  S.chatScroll=true;render();
+ },
+ chatEdit:function(d){var c=S.chat.msgs[+d.i].cards[0];S.open=JSON.parse(JSON.stringify(c.f));c.state='cancelled';go({name:'new'})},
+ chatCancel:function(d){S.chat.msgs[+d.i].cards[0].state='cancelled';bot('ביטלתי. שום דבר לא נשמר.');S.chatScroll=true;render()},
+ chatAnn:function(d){var c=S.chat.msgs[+d.i].cards[0];S.form=annInit();S.form.aud=c.aud;S.annTab='new';S.view=null;S.tab='ann';render()},
+ goActs:function(){S.view=null;S.tab='acts';render()},
+ admGo:function(d){S.tab=d.v;S.view=null;if(d.v==='ann')S.form=annInit();render()},
+ admOpen:function(d){openForm(d.v,d.id||null)},
+ toggle:function(d){var l=S.form[d.f],i=l.indexOf(d.v);if(i>=0)l.splice(i,1);else l.push(d.v);delete S.errs[d.f];render()},
+ setF:function(d){S.form[d.f]=d.v==='1';render()},
+ formSave:function(){saveForm()},
+ formDel:function(){delForm()},
+ annTabSet:function(d){S.annTab=d.v;render()},
+ annAsk:function(d){
+  var f=S.form,e={};
+  if(!f.title.trim())e.title='חסר: כותרת';if(!f.body.trim())e.body='חסר: תוכן ההודעה';
+  if(d.v==='sched'){if(!f.date)e.date='חסר: תאריך';if(!f.time)e.time='חסר: שעה';if(f.date&&f.time&&new Date(f.date+'T'+f.time)<=now())e.date='מועד התזמון כבר עבר'}
+  if(Object.keys(e).length){S.errs=e;render();return}
+  S.errs={};S.modal={t:'ann',mode:d.v};render();
+ },
+ annDo:function(d){
+  var f=S.form,n=now();D.seq++;
+  D.ann.push({id:'n'+D.seq,title:f.title.trim(),body:f.body.trim(),aud:f.aud,status:d.v==='now'?'sent':'sched',when:d.v==='now'?fd(dstr(n)):fd(f.date)+' '+f.time});
+  S.modal=null;S.form=annInit();S.annTab='sent';toast(d.v==='now'?'ההודעה נשלחה':'ההודעה תוזמנה');
+ }
+};
+document.addEventListener('click',function(e){
+ if(e.target.id==='btnReset'){D=seed();S.open=null;S.view=null;S.modal=null;S.form=null;S.hist=false;S.tab=isAdmin()?'dash':'home';S.clock='a';S.chat=newChat();S.sf={dir:'all',act:'',area:''};toast('האבטיפוס אופס');return}
+ var el=e.target.closest('[data-a]');if(!el||el.disabled)return;
+ var f=H[el.dataset.a];if(f)f(el.dataset,el);
+});
+document.addEventListener('submit',function(e){
+ var f=e.target;if(f.dataset&&f.dataset.submit==='chatSend'){e.preventDefault();var i=document.getElementById('chatIn');var t=i.value;S.chatScroll=true;chatSend(t);render()}
+});
+document.addEventListener('input',function(e){
+ var t=e.target;
+ if(t.dataset.search){S.q[t.dataset.search]=t.value;refreshList(t.dataset.search);return}
+ if(t.dataset.f&&S.form){S.form[t.dataset.f]=t.value;if(S.errs[t.dataset.f]){delete S.errs[t.dataset.f]}}
+});
+document.addEventListener('change',function(e){
+ var t=e.target;
+ if(t.id==='selRole'){S.role=t.value;S.toast=null;S.view=null;S.modal=null;S.form=null;S.open=null;S.chat=newChat();S.tab=isAdmin()?'dash':'home';render();return}
+ if(t.id==='selClock'){S.clock=t.value;render();return}
+ if(t.dataset.sf){S.sf[t.dataset.sf]=t.value;render();return}
+ if(t.dataset.o){var o=S.open;o[t.dataset.o]=t.value;if(t.dataset.o==='act'){var kk=kidOf(me());if(kk&&kk.acts.indexOf(o.act)<0&&o.seats<1)o.seats=1}render();return}
+ if(t.dataset.f&&S.form){S.form[t.dataset.f]=t.value;if(S.tab==='ann'&&!S.view)return}
+});
+render();
+})();
+</script>
+</body>
+</html>

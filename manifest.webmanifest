@@ -1,0 +1,17 @@
+{
+  "name": "SafeRide אבטיפוס",
+  "short_name": "SafeRide",
+  "description": "הסעות קהילתיות לחוגים. אבטיפוס עם נתוני דמה.",
+  "lang": "he",
+  "dir": "rtl",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#F7F9FC",
+  "theme_color": "#1F5B9E",
+  "icons": [
+    { "src": "assets/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "assets/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" }
+  ]
+}
