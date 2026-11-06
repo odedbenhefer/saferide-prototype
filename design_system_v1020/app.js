@@ -796,6 +796,7 @@ function chatAsk(t){
  S.chat.msgs.push({from:'me',text:t});
  var k=kind(),u=me(),kid=kidOf(u),p=parseText(t);
  if(k==='kid'){
+  if(/פתח|בקש|תזמין/.test(t)){botSay('הורה פותח הסעות ושולח בקשות. אני יכול להגיד לך מי לוקח אותך ומי מחזיר אותך.');return}
   if(/מי (לוקח|מסיע|מחזיר|מביא)|היום|מתי|הסעה/.test(t))return myRidesAnswer(D.kids.noam,t);
   botSay('אני יכול לענות רק על ההסעות שלך, למשל "מי לוקח אותי היום?".');return;
  }
