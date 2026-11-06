@@ -389,7 +389,7 @@ function viewHome(){
  if(k)k.acts.forEach(function(a){var q=lastReq(k.id,a);if(q&&q.parent===u.id)reqs.push(q)});
  var pend=reqs.filter(function(q){return reqState(q)==='pending'}).length,t=S.homeTab,body='';
  var bub=pend?'יש בקשה שממתינה לאישור המסיעים.':mt.length&&k?'מצאתי הסעות שמתאימות ל'+esc(first(k.name))+'.':pl.length&&k?'ההסעות של '+esc(first(k.name))+' מסודרות.':'אין עדיין הסעות. כשתיפתח הסעה שמתאימה, היא תופיע כאן.';
- body+=Tabs([['week','השבוע'],['match','מתאימות',mt.length||''],['reqs','הבקשות שלי',pend||'']],t,'homeTab');
+ body+=Tabs([['week','השבוע'],['match','להצטרף לנסיעה',mt.length||''],['reqs','הבקשות שלי',pend||'']],t,'homeTab');
  if(!k)body+=Note('אין ילד משויך לחשבון. מנהל החוג משייך ילדים להורים.','info','info');
  else if(t==='week')body+=weekBody(u,k,pl);
  else if(t==='match')body+=matchBody(u,k,mt);
@@ -405,7 +405,7 @@ function weekBody(u,k,pl){
   if(s.q)ex=reqState(s.q)==='settled'?Note(esc(first(k.name))+' מסודר בשני הכיוונים.','ok'):Note('אישור בכיוון אחד הוא זמני. הילד מסודר רק כששני הכיוונים מאושרים.','info');
   h+=ActivityCard({act:s.act,date:s.date,rows:planRows(s),extra:ex});
  });
- if(!pl.length)h+=Empty('cal','אין עדיין הסעות השבוע','חפשו הסעה בלשונית "מתאימות".',Btn('למתאימות',{v:'secondary',a:'homeTab',d:{v:'match'},inline:true}));
+ if(!pl.length)h+=Empty('cal','אין עדיין הסעות השבוע','חפשו הסעה בלשונית "להצטרף לנסיעה".',Btn('להצטרף לנסיעה',{v:'secondary',a:'homeTab',d:{v:'match'},inline:true}));
  return h;
 }
 function matchBody(u,k,mt){
@@ -420,7 +420,7 @@ function matchBody(u,k,mt){
  }).join('');
 }
 function reqsBody(u,k,reqs){
- if(!reqs.length)return Empty('send','עדיין לא שלחתם בקשות','בקשה נשלחת מלשונית "מתאימות".',Btn('למתאימות',{v:'secondary',a:'homeTab',d:{v:'match'},inline:true}));
+ if(!reqs.length)return Empty('send','עדיין לא שלחתם בקשות','בקשה נשלחת מלשונית "להצטרף לנסיעה".',Btn('להצטרף לנסיעה',{v:'secondary',a:'homeTab',d:{v:'match'},inline:true}));
  return reqs.map(function(q){
   var st=reqState(q),o=ride(q.out),b=ride(q.back),sc=function(v){return StatusChip(v==='approved'?'approved':v==='rejected'?'rejected':'pending')};
   var ex=st==='settled'?Note(esc(first(k.name))+' מסודר בשני הכיוונים.','ok'):st==='pending'?Note('אישור בכיוון אחד הוא זמני. הילד מסודר רק כששני הכיוונים מאושרים.','info'):Note(endText(q),'no');
