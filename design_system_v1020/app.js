@@ -101,6 +101,7 @@ var saved=load();
 var D=saved?saved.D:seed();
 var S={role:saved?saved.role:null,clock:saved?saved.clock:'a',theme:saved?saved.theme:'auto',
  tab:'home',homeTab:'week',rideTab:'up',view:null,modal:null,open:null,form:null,errs:{},q:{},annTab:'new',admTab:'dash',sig:'',focus:null,joinAct:''};
+S.chat={msgs:[],draft:''};
 var root=document.getElementById('root');
 function save(){try{localStorage.setItem(KEY,JSON.stringify({D:D,role:S.role,clock:S.clock,theme:S.theme}))}catch(e){}}
 function applyTheme(){
@@ -185,14 +186,21 @@ function Empty(icon,title,text,btn){
  return '<div class="card"><div class="empty-s"><div class="bigic">'+ic(icon)+'</div><h3 class="t4">'+title+'</h3>'+(text?'<p class="bsm mut">'+text+'</p>':'')+(btn||'')+'</div></div>';
 }
 var TINT={driver:'--tint-sky',parent:'--tint-aqua',child:'--tint-blush',admin:'--tint-lilac'};
+var HINT=(function(){try{return localStorage.getItem('saferide-v1020-hint')!=='1'}catch(e){return true}})();
+function RidiBtn(size,look){
+ return '<button type="button" class="ridi'+(HINT?' hint':'')+'" data-a="chat" aria-label="שיחה עם רידי" style="width:'+size+'px;height:'+size+'px">'+Ridi(size,look||'right')+'</button>';
+}
 function Screen(o){
- var h='<div class="screen" data-role="'+o.role+'"><header class="hd '+o.role+(o.mascot?' m'+o.mascot:'')+'">'+
+ var size=o.mascot===undefined?72:o.mascot;
+ if(!o.bubble)o.bubble='צריכים עזרה? אפשר לשאול אותי.';
+ o.bubble=o.bubble+(HINT?'<span class="hintline">לחצו עליי ונדבר</span>':'');
+ var h='<div class="screen" data-role="'+o.role+'"><header class="hd '+o.role+' m'+size+'">'+
   '<div class="hd-top">'+(o.back?'<button type="button" class="circ" data-a="back" aria-label="חזרה">'+ic('fwd',24)+'</button>':'<span class="sp"></span>')+
   '<button type="button" class="demo" data-a="demo">'+ic('sliders',16)+'מצב הדגמה</button>'+
   '<span class="acts">'+(o.actions||'<span class="sp"></span>')+'</span></div>'+
   (o.kicker?'<div class="kick">'+o.kicker+'</div>':'')+'<h1 class="t1">'+o.title+'</h1>'+
   (o.bubble?'<div class="bubble">'+o.bubble+'</div>':'')+
-  (o.mascot?'<div class="ridi">'+Ridi(o.mascot,o.look||'right')+'</div>':'')+'</header>'+
+  RidiBtn(size,o.look)+'</header>'+
   '<main class="sheet'+(o.nav?' hasnav':'')+'"><div class="stack">'+o.body+'</div></main>';
  if(o.nav) h+=BottomNav(o.nav);
  return h+'</div>';
@@ -763,9 +771,89 @@ function delForm(){
  if(v.name==='actForm'){delete D.acts[v.id];Object.keys(D.kids).forEach(function(k){D.kids[k].acts=D.kids[k].acts.filter(function(a){return a!==v.id})})}
  S.view=null;S.form=null;toast('נמחק.');
 }
+/* ================= Ridi chat (rule based, demo) ================= */
+function newChat(){return {msgs:[],draft:''}}
+function botSay(text,items){S.chat.msgs.push({from:'bot',text:text,items:items||[]})}
+function chatChips(){
+ var k=kind(),u=me();
+ if(k==='kid')return ['מי לוקח אותי היום?','מי מחזיר אותי?'];
+ if(k==='admin')return ['כמה ילדים רשומים?','הכן הודעה להורי החוג','הוסף חוג שחייה ביום רביעי'];
+ var c=[];
+ if(!S.view&&S.tab==='home'&&S.homeTab==='match')c.push('למה ההסעה מתאימה?');
+ c.push('מצא לי הסעה','מי מחזיר את הילד?');
+ if(u&&u.drive)c.push('פתח הסעה ביום שני ב-16:30 אל החוג');
+ return c;
+}
+function myRidesAnswer(kid,t){
+ if(!kid){botSay('אין ילד משויך לחשבון.');return}
+ var dir=/מחזיר|חזור|חזרה/.test(t)?'from':/מביא|הלוך/.test(t)?'to':null,self=kind()==='kid';
+ var l=kidRides(kid.id).filter(function(r){return r.date>=dstr(now())&&(!dir||r.dir===dir)&&r.status!=='completed'});
+ if(!l.length){botSay('אין כרגע הסעת '+(dir?dirName(dir)+' ':'')+'מאושרת '+(self?'עבורך':'ל'+first(kid.name))+'.'+(kind()==='parent'?' אפשר לבקש בלשונית "להצטרף לנסיעה".':''));return}
+ botSay(self?'אלה ההסעות המאושרות שלך:':'אלה ההסעות המאושרות של '+first(kid.name)+':',l.slice(0,3).map(function(r){return {t:'ride',id:r.id}}));
+}
+function chatAsk(t){
+ t=t.trim();if(!t)return;
+ S.chat.msgs.push({from:'me',text:t});
+ var k=kind(),u=me(),kid=kidOf(u),p=parseText(t);
+ if(k==='kid'){
+  if(/מי (לוקח|מסיע|מחזיר|מביא)|היום|מתי|הסעה/.test(t))return myRidesAnswer(D.kids.noam,t);
+  botSay('אני יכול לענות רק על ההסעות שלך, למשל "מי לוקח אותי היום?".');return;
+ }
+ if(k==='admin'){
+  if(/כמה/.test(t)&&/ילדים/.test(t)){var n=Object.keys(D.kids).filter(function(x){return !p.act||D.kids[x].acts.indexOf(p.act)>=0}).length;botSay('רשומים '+n+' ילדים'+(p.act?' ל'+act(p.act).full:'')+'.');return}
+  if(/כמה/.test(t)&&/הורים/.test(t)){botSay('רשומים '+Object.keys(D.parents).length+' הורים.');return}
+  if(/הוסף חוג|חוג חדש/.test(t)){
+   var nm=(t.match(/חוג\s+([^\s,]+)/)||[])[1],dm=t.match(/(?:יום\s|ב)(ראשון|שני|שלישי|רביעי|חמישי|שישי)/);
+   if(!nm||nm==='חדש'){botSay('איך קוראים לחוג, ובאיזה יום הוא מתקיים?');return}
+   botSay('פתחתי טיוטה. שום דבר לא נשמר לפני שתאשרו במסך החוג.',[{t:'link',a:'chatAct',l:'לטיוטת החוג "'+nm+'"',d:{name:nm,day:dm?dm[1]:'שני'}}]);return;
+  }
+  if(/הודעה/.test(t)){botSay('פתחתי טיוטה. שום דבר לא נשלח לפני אישור שלכם.',[{t:'link',a:'chatAnn',l:'לטיוטת ההודעה',d:{aud:p.act||'all'}}]);return}
+  botSay('אפשר לשאול למשל "כמה ילדים רשומים לכדורסל?" או לבקש "הוסף חוג שחייה ביום רביעי".');return;
+ }
+ var other=Object.keys(D.kids).filter(function(x){return (!kid||x!==kid.id)&&t.indexOf(first(D.kids[x].name))>=0})[0];
+ if(other){botSay('אין לי הרשאה להציג מידע על ילדים אחרים. אפשר לשאול על הילד שלכם.');return}
+ if(/מי (מחזיר|לוקח|מסיע|מביא)/.test(t))return myRidesAnswer(kid,t);
+ if(/למה/.test(t)){
+  var m0=kid?matches(u,kid)[0]:null;
+  botSay(m0?whyMatch(m0)+' אני רק מציע. הבקשה נשלחת רק כשאתם לוחצים.':'אין כרגע הסעה להסביר. כשתיפתח הסעה שמתאימה, אסביר למה.');return;
+ }
+ if(/מצא|חפש|חיפוש|להצטרף/.test(t)&&/הסעה|נסיעה|הסעות/.test(t)){
+  if(!kid){botSay('אין ילד משויך לחשבון.');return}
+  var ms=matches(u,kid);
+  if(!ms.length){botSay('לא מצאתי הסעה פנויה שמתאימה. כשתיפתח הסעה חדשה היא תופיע בלשונית "להצטרף לנסיעה".');return}
+  botSay('מצאתי '+ms.length+(ms.length===1?' אפשרות':' אפשרויות')+'. הבחירה שולחת רק בקשה, והמסיע הוא שמאשר.',ms.slice(0,3).map(function(m){var both=!!(sideRide(m.to)&&sideRide(m.from));return {t:'join',act:m.act,date:m.date,ok:both,why:!sideRide(m.to)?'ממתינים להסעת הלוך':'ממתינים להסעת חזור'}}));return;
+ }
+ if(/פתח|פותח|אני מסיע|נוסע/.test(t)){
+  if(!u.drive){botSay('רק הורה שמנהל החוג אישר להסיע יכול לפתוח הסעה.');return}
+  S.open=initOpen();S.open.text=t;
+  ['act','dir','date','time','area','seats'].forEach(function(f){if(p[f]){S.open[f]=p[f];S.open.found.push(f)}});
+  var e=openErrs(S.open);
+  S.open.said=S.open.found.length?(e.length?'הבנתי חלק מהפרטים. '+(/^חסר: /.test(e[0])?'חסר לי '+e[0].replace('חסר: ','')+'.':e[0]):'הבנתי. בדקו את הפרטים ואשרו.'):'';
+  botSay(e.length?'הכנתי חלק מהפרטים. אפשר להשלים את השאר במסך פתיחת ההסעה. שום דבר לא נשמר עד שתאשרו.':'הכנתי טיוטה. בדקו ואשרו במסך פתיחת ההסעה. שום דבר לא נשמר עד שתאשרו.',[{t:'link',a:'chatNewRide',l:'למסך פתיחת הסעה'}]);return;
+ }
+ botSay('אני יכול לעזור לחפש הסעה, להסביר למה היא מתאימה, לענות "מי מחזיר את הילד?" ולהכין טיוטה של הסעה חדשה.');
+}
+function chatItem(it){
+ if(it.t==='ride'){var r=ride(it.id);return RideRow(r,{noSeats:true,sub:rideChip(r)})}
+ if(it.t==='join'){var a=act(it.act);return '<div class="card"><div class="act-hd"><div class="actic">'+ic(a.icon,26)+'</div><div class="grow"><h3 class="t4">'+esc(a.full)+'</h3><div class="cap mut">'+wd(it.date)+'</div></div></div>'+(it.ok?Btn('להצטרף לנסיעה',{sm:true,a:'chatJoin',d:{act:it.act,date:it.date}}):Btn(it.why,{sm:true,dis:true}))+'</div>'}
+ if(it.t==='link')return Btn(it.l,{v:'secondary',sm:true,a:it.a,d:it.d});
+ return '';
+}
+function chatModal(){
+ var h='<div class="chat-hd"><span class="rd">'+Ridi(40,'center')+'</span><div class="grow"><h2 class="t3">רידי</h2><div class="cap mut">מציע ומסביר. לא שומר בלי אישור שלך.</div></div><button type="button" class="circ" data-a="closeModal" aria-label="סגירה" style="background:var(--none-bg)">'+ic('x',22)+'</button></div>';
+ h+='<div class="msgs" id="msgs" aria-live="polite"><div class="msg bot">'+ic('sparkle',18)+'<span>היי, אני רידי. אפשר לשאול אותי על הסעות, או לבקש שאכין טיוטה. שום דבר לא נשמר בלי אישור שלך.</span></div>';
+ S.chat.msgs.forEach(function(m){
+  if(m.from==='me')h+='<div class="msg me">'+esc(m.text)+'</div>';
+  else{h+='<div class="msg bot">'+ic('sparkle',18)+'<span>'+esc(m.text)+'</span></div>';if(m.items.length)h+='<div class="items">'+m.items.map(chatItem).join('')+'</div>'}
+ });
+ h+='</div><div class="sugg">'+chatChips().map(function(c){return '<button type="button"'+da('chatPrompt',{t:c})+'>'+esc(c)+'</button>'}).join('')+'</div>';
+ h+='<form class="composer" data-submit="chat"><input id="chatIn" class="in" autocomplete="off" placeholder="כתבו לרידי" aria-label="הודעה לרידי" value="'+esc(S.chat.draft)+'"><button type="submit" class="send" aria-label="שליחה">'+ic('send',22)+'</button></form>';
+ return '<div class="modal" data-a="closeModal" data-bg="1"><div class="dialog chat" role="dialog" aria-modal="true" aria-label="שיחה עם רידי">'+h+'</div></div>';
+}
 /* ================= dialogs ================= */
 function modalHtml(){
  var m=S.modal;if(!m)return '';
+ if(m.t==='chat')return chatModal();
  var wrap=function(i){return '<div class="modal" data-a="closeModal" data-bg="1"><div class="dialog" role="dialog" aria-modal="true">'+i+'</div></div>'};
  if(m.t==='cancel')return wrap('<div class="icbig no">'+ic('x',28)+'</div><h2 class="t2">לבטל את ההסעה?</h2><p class="bsm mut">הביטול ישחרר את המקומות ויבטל גם את האישור הזמני של הילדים בכיוון השני.</p><div class="btns">'+Btn('חזרה',{v:'secondary',a:'closeModal'})+Btn('ביטול ההסעה',{v:'danger',a:'doCancel',d:{id:m.id}})+'</div>');
  if(m.t==='finish')return wrap('<div class="icbig out">'+ic('flag',28)+'</div><h2 class="t2">לסיים את ההסעה?</h2><p class="bsm mut">דיווח הסיום יישמר והורים רלוונטיים יקבלו הודעה. הוא לא מאשר הגעה של ילדים, ואי אפשר לדווח שוב.</p><div class="btns">'+Btn('חזרה',{v:'secondary',a:'closeModal'})+Btn('סיימתי',{a:'doFinish',d:{id:m.id}})+'</div>');
@@ -804,6 +892,7 @@ function render(){
  var scr=root.querySelector('.screen'),meta=document.getElementById('themeColor');
  if(meta){var rl=scr?scr.getAttribute('data-role'):null,v=rl?getComputedStyle(document.documentElement).getPropertyValue(TINT[rl]).trim():getComputedStyle(document.documentElement).getPropertyValue('--ground').trim();if(v)meta.setAttribute('content',v)}
  if(sig!==S.sig){S.sig=sig;window.scrollTo(0,0)}
+ if(S.modal&&S.modal.t==='chat'){var mb=document.getElementById('msgs');if(mb)mb.scrollTop=mb.scrollHeight;if(S.focusChat){var ci=document.getElementById('chatIn');if(ci)ci.focus();S.focusChat=false}}
  save();
 }
 function refreshList(key){
@@ -812,11 +901,17 @@ function refreshList(key){
 }
 /* ================= events ================= */
 var H={
- login:function(d){S.role=d.k;S.tab='home';S.homeTab='week';S.rideTab='up';S.admTab='dash';S.view=null;S.form=null;S.open=null;S.modal=null;render()},
- logout:function(){S.role=null;S.view=null;S.form=null;S.modal=null;render()},
+ login:function(d){S.chat=newChat();S.role=d.k;S.tab='home';S.homeTab='week';S.rideTab='up';S.admTab='dash';S.view=null;S.form=null;S.open=null;S.modal=null;render()},
+ logout:function(){S.chat=newChat();S.role=null;S.view=null;S.form=null;S.modal=null;render()},
  demo:function(){S.modal={t:'demo'};render()},
+ chat:function(){S.modal={t:'chat'};HINT=false;try{localStorage.setItem('saferide-v1020-hint','1')}catch(e){}render()},
+ chatPrompt:function(d){chatAsk(d.t);render()},
+ chatJoin:function(d){S.modal=null;startJoin(d.act,d.date)},
+ chatNewRide:function(){S.modal=null;go({name:'new'})},
+ chatAnn:function(d){S.modal=null;S.form=annInit();S.form.aud=d.aud;S.annTab='new';go({name:'ann'})},
+ chatAct:function(d){S.modal=null;openForm('actForm',null);S.form.name=d.name;S.form.days=[d.day];render()},
  theme:function(d){S.theme=d.v;render()},
- resetDemo:function(){D=seed();S.clock='a';S.view=null;S.form=null;S.open=null;S.modal=null;S.tab='home';S.homeTab='week';S.rideTab='up';S.admTab='dash';render();toast('נתוני הדמה אופסו.')},
+ resetDemo:function(){S.chat=newChat();D=seed();S.clock='a';S.view=null;S.form=null;S.open=null;S.modal=null;S.tab='home';S.homeTab='week';S.rideTab='up';S.admTab='dash';render();toast('נתוני הדמה אופסו.')},
  tab:function(d){S.tab=d.v;S.view=null;S.form=null;render()},
  back:function(){var wasAnn=S.view&&S.view.name==='ann';S.view=null;S.form=null;S.errs={};S.modal=null;render()},
  homeTab:function(d){S.tab='home';S.homeTab=d.v;S.view=null;render()},
@@ -872,15 +967,20 @@ document.addEventListener('click',function(e){
  var el=e.target.closest('[data-a]');if(!el||el.disabled)return;
  var f=H[el.dataset.a];if(f)f(el.dataset,el,e);
 });
+document.addEventListener('submit',function(e){
+ var f=e.target;
+ if(f.dataset&&f.dataset.submit==='chat'){e.preventDefault();var i=document.getElementById('chatIn');var t=i?i.value:'';S.chat.draft='';chatAsk(t);S.focusChat=true;render()}
+});
 document.addEventListener('input',function(e){
  var t=e.target;
+ if(t.id==='chatIn'){S.chat.draft=t.value;return}
  if(t.dataset.search){S.q[t.dataset.search]=t.value;refreshList(t.dataset.search);return}
  if(t.dataset.ot&&S.open){S.open.text=t.value;return}
  if(t.dataset.f&&S.form){S.form[t.dataset.f]=t.value;if(S.errs[t.dataset.f])delete S.errs[t.dataset.f]}
 });
 document.addEventListener('change',function(e){
  var t=e.target;
- if(t.id==='selRole'){S.modal=null;if(!t.value){S.role=null}else{S.role=t.value;S.tab='home';S.homeTab='week';S.rideTab='up';S.admTab='dash'}S.view=null;S.form=null;S.open=null;render();return}
+ if(t.id==='selRole'){S.chat=newChat();S.modal=null;if(!t.value){S.role=null}else{S.role=t.value;S.tab='home';S.homeTab='week';S.rideTab='up';S.admTab='dash'}S.view=null;S.form=null;S.open=null;render();return}
  if(t.id==='selClock'){S.clock=t.value;render();return}
  if(t.dataset.o&&S.open){S.open[t.dataset.o]=t.value;render();return}
  if(t.dataset.f&&S.form){S.form[t.dataset.f]=t.value}

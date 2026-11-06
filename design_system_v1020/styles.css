@@ -80,7 +80,10 @@ h1,h2,h3,h4,p{margin:0}
 .kick{font:500 14px/21px var(--sans);color:var(--ink);opacity:.8}
 .hd .t1{margin-top:2px}
 .bubble{margin-top:var(--space-3);background:var(--glass);border-radius:18px 18px 18px 4px;padding:10px 14px;font:400 14px/21px var(--sans);max-width:340px}
-.ridi{position:absolute;left:var(--space-4);bottom:0;display:block;pointer-events:none}
+.ridi{position:absolute;left:var(--space-4);bottom:0;display:block;border:0;background:none;padding:0;cursor:pointer;z-index:0}
+.ridi::after{content:"";position:absolute;inset:-14px -14px 0 -14px}
+.ridi:active svg{transform:scale(.96)}
+.hintline{display:block;margin-top:2px;font:500 13px/18px var(--sans);color:var(--accent-text)}
 .ridi svg{display:block}
 /* white sheet */
 .sheet{position:relative;z-index:1;flex:1;margin-top:-32px;background:var(--sheet);border-radius:var(--r-sheet) var(--r-sheet) 0 0;padding:var(--space-6) var(--space-4) var(--space-8)}
@@ -210,3 +213,21 @@ select.in{appearance:none;background-image:linear-gradient(45deg,transparent 50%
 .dialog .icbig.no{background:var(--no-bg);color:var(--no-fg)}.dialog .icbig.ok{background:var(--ok-bg);color:var(--ok-fg)}.dialog .icbig.out{background:var(--out-bg);color:var(--out-fg)}
 .toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(112px + env(safe-area-inset-bottom,0px));z-index:90;background:var(--ink);color:var(--ground);padding:12px 18px;border-radius:var(--r-md);font:500 14px/21px var(--sans);max-width:min(92vw,400px);text-align:center;box-shadow:var(--shadow-fab)}
 @media (prefers-reduced-motion:no-preference){button.card:active,.role-card:active{transform:scale(.99)}.toast{animation:pop .2s ease-out}@keyframes pop{from{opacity:0;transform:translate(-50%,8px)}}}
+/* Ridi chat sheet */
+@media (prefers-reduced-motion:no-preference){.ridi.hint svg{transform-origin:50% 100%;animation:ridi-wiggle 3s ease-in-out 1s 3}@keyframes ridi-wiggle{0%,100%{transform:rotate(0)}10%{transform:rotate(-8deg)}20%{transform:rotate(7deg)}30%{transform:rotate(-4deg)}40%{transform:rotate(0)}}}
+.dialog.chat{padding-top:var(--space-4);gap:var(--space-3);height:min(640px,86vh)}
+.chat-hd{display:flex;align-items:center;gap:var(--space-3)}
+.chat-hd .rd{width:44px;height:44px;border-radius:var(--r-full);background:var(--tint-aqua);display:flex;align-items:flex-end;justify-content:center;overflow:hidden;flex:none}
+.msgs{flex:1;min-height:0;overflow-y:auto;display:flex;flex-direction:column;gap:var(--space-3);padding:var(--space-1) 0}
+.msg{max-width:88%;padding:10px 14px;border-radius:18px;font:400 15px/22px var(--sans);white-space:pre-wrap}
+.msg.bot{align-self:flex-start;background:var(--sheet);border-bottom-right-radius:4px;display:flex;gap:var(--space-2)}
+.msg.bot .ic{color:var(--accent-text);flex:none;margin-top:3px}
+.msg.me{align-self:flex-end;background:var(--action);color:var(--on-action);border-bottom-left-radius:4px}
+.items{display:flex;flex-direction:column;gap:var(--space-2);align-self:stretch}
+.items .card{box-shadow:none;background:var(--sheet);padding:var(--space-3)}
+.sugg{display:flex;flex-wrap:wrap;gap:var(--space-2)}
+.sugg button{min-height:44px;padding:0 14px;border-radius:var(--r-full);border:1.5px solid var(--action-line);background:var(--card);color:var(--action-text);font:700 14px/18px var(--display)}
+.composer{display:flex;gap:var(--space-2);align-items:center}
+.composer .in{flex:1}
+.composer .send{width:52px;height:52px;border-radius:var(--r-btn);border:0;background:var(--action);color:var(--on-action);display:inline-flex;align-items:center;justify-content:center;flex:none}
+.composer .send svg{transform:scaleX(-1)}
