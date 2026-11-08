@@ -188,7 +188,8 @@ function Empty(icon,title,text,btn){
 var TINT={driver:'--tint-sky',parent:'--tint-aqua',child:'--tint-blush',admin:'--tint-lilac'};
 var HINT=(function(){try{return localStorage.getItem('saferide-v1020-hint')!=='1'}catch(e){return true}})();
 function RidiBtn(size,look){
- return '<button type="button" class="ridi'+(HINT?' hint':'')+'" data-a="chat" aria-label="שיחה עם רידי" style="width:'+size+'px;height:'+size+'px">'+Ridi(size,look||'right')+'</button>';
+ var d=size>72?84:68;
+ return '<button type="button" class="ridi'+(HINT?' hint':'')+'" data-a="chat" aria-label="שיחה עם רידי" style="width:'+d+'px;height:'+d+'px">'+Ridi(d-24,look||'center')+'</button>';
 }
 function Screen(o){
  var size=o.mascot===undefined?72:o.mascot;
@@ -865,7 +866,7 @@ function modalHtml(){
    '<div class="field"><label for="selRole">'+ic('user')+'משתמש</label><select id="selRole" class="in"><option value="">מסך פתיחה</option>'+ROLES.map(function(r){return '<option value="'+r.k+'" '+(S.role===r.k?'selected':'')+'>'+r.name+' · '+r.sub+'</option>'}).join('')+'</select></div>'+
    '<div class="field"><label for="selClock">'+ic('clock')+'שעון ההדגמה</label><select id="selClock" class="in">'+CLOCKS.map(function(c){return '<option value="'+c.k+'" '+(S.clock===c.k?'selected':'')+'>'+c.label+'</option>'}).join('')+'</select></div>'+
    '<div class="field"><span class="lbl2">מראה</span><div class="seg">'+th.map(function(t){return '<button type="button" aria-pressed="'+(S.theme===t[0])+'"'+da('theme',{v:t[0]})+'>'+t[1]+'</button>'}).join('')+'</div></div>'+
-   Btn('איפוס נתוני הדמה',{v:'danger',sm:true,a:'resetDemo'})+Btn('סגירה',{a:'closeModal'})+'<p class="cap mut" style="text-align:center">גרסה 1020.3 · רידי כפתור שיחה בכל מסך</p>');
+   Btn('איפוס נתוני הדמה',{v:'danger',sm:true,a:'resetDemo'})+Btn('סגירה',{a:'closeModal'})+'<p class="cap mut" style="text-align:center">גרסה 1020.4 · רידי ככפתור צף</p>');
  }
  return '';
 }
