@@ -99,14 +99,15 @@ var KEY='saferide-v1020';
 function load(){try{var j=JSON.parse(localStorage.getItem(KEY));if(j&&j.D&&j.D.rides)return j}catch(e){}return null}
 var saved=load();
 var D=saved?saved.D:seed();
-var S={role:saved?saved.role:null,clock:saved?saved.clock:'a',theme:saved?saved.theme:'auto',
+var S={role:saved?saved.role:null,clock:saved?saved.clock:'a',theme:saved?saved.theme:'auto',motion:saved&&saved.motion||'auto',
  tab:'home',homeTab:'week',rideTab:'up',view:null,modal:null,open:null,form:null,errs:{},q:{},annTab:'new',admTab:'dash',sig:'',focus:null,joinAct:''};
 S.chat={msgs:[],draft:''};
 var root=document.getElementById('root');
-function save(){try{localStorage.setItem(KEY,JSON.stringify({D:D,role:S.role,clock:S.clock,theme:S.theme}))}catch(e){}}
+function save(){try{localStorage.setItem(KEY,JSON.stringify({D:D,role:S.role,clock:S.clock,theme:S.theme,motion:S.motion}))}catch(e){}}
 function applyTheme(){
  var dark=S.theme==='dark'||(S.theme==='auto'&&window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches);
  document.documentElement.setAttribute('data-theme',dark?'dark':'light');
+ document.documentElement.setAttribute('data-motion',S.motion==='on'?'on':'auto');
 }
 /* ================= helpers ================= */
 function esc(t){return String(t==null?'':t).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
@@ -773,6 +774,7 @@ function delForm(){
  S.view=null;S.form=null;toast('נמחק.');
 }
 /* ================= Ridi chat (rule based, demo) ================= */
+function reducedMotion(){try{return !!(window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches)}catch(e){return false}}
 function newChat(){return {msgs:[],draft:''}}
 function botSay(text,items){S.chat.msgs.push({from:'bot',text:text,items:items||[]})}
 function chatChips(){
@@ -866,7 +868,8 @@ function modalHtml(){
    '<div class="field"><label for="selRole">'+ic('user')+'משתמש</label><select id="selRole" class="in"><option value="">מסך פתיחה</option>'+ROLES.map(function(r){return '<option value="'+r.k+'" '+(S.role===r.k?'selected':'')+'>'+r.name+' · '+r.sub+'</option>'}).join('')+'</select></div>'+
    '<div class="field"><label for="selClock">'+ic('clock')+'שעון ההדגמה</label><select id="selClock" class="in">'+CLOCKS.map(function(c){return '<option value="'+c.k+'" '+(S.clock===c.k?'selected':'')+'>'+c.label+'</option>'}).join('')+'</select></div>'+
    '<div class="field"><span class="lbl2">מראה</span><div class="seg">'+th.map(function(t){return '<button type="button" aria-pressed="'+(S.theme===t[0])+'"'+da('theme',{v:t[0]})+'>'+t[1]+'</button>'}).join('')+'</div></div>'+
-   Btn('איפוס נתוני הדמה',{v:'danger',sm:true,a:'resetDemo'})+Btn('סגירה',{a:'closeModal'})+'<p class="cap mut" style="text-align:center">גרסה 1020.5 · רידי מתנדנד כל 2 שניות</p>');
+   '<div class="field"><span class="lbl2">'+ic('sparkle')+'תנועה של רידי</span><div class="seg"><button type="button" aria-pressed="'+(S.motion==='auto')+'"'+da('motion',{v:'auto'})+'>לפי המכשיר</button><button type="button" aria-pressed="'+(S.motion==='on')+'"'+da('motion',{v:'on'})+'>תמיד</button></div><p class="cap mut">'+(reducedMotion()?'המכשיר שלך מבקש להפחית תנועה, ולכן ב"לפי המכשיר" רידי לא זז. בחר "תמיד" כדי לראות אותו מתנדנד.':'המכשיר לא מבקש להפחית תנועה, אז רידי אמור לזוז כל 2 שניות.')+'</p></div>'+
+   Btn('איפוס נתוני הדמה',{v:'danger',sm:true,a:'resetDemo'})+Btn('סגירה',{a:'closeModal'})+'<p class="cap mut" style="text-align:center">גרסה 1020.6 · רידי: תנועה לפי המכשיר או תמיד</p>');
  }
  return '';
 }
@@ -913,6 +916,7 @@ var H={
  chatAnn:function(d){S.modal=null;S.form=annInit();S.form.aud=d.aud;S.annTab='new';go({name:'ann'})},
  chatAct:function(d){S.modal=null;openForm('actForm',null);S.form.name=d.name;S.form.days=[d.day];render()},
  theme:function(d){S.theme=d.v;render()},
+ motion:function(d){S.motion=d.v;render()},
  resetDemo:function(){S.chat=newChat();D=seed();S.clock='a';S.view=null;S.form=null;S.open=null;S.modal=null;S.tab='home';S.homeTab='week';S.rideTab='up';S.admTab='dash';render();toast('נתוני הדמה אופסו.')},
  tab:function(d){S.tab=d.v;S.view=null;S.form=null;render()},
  back:function(){var wasAnn=S.view&&S.view.name==='ann';S.view=null;S.form=null;S.errs={};S.modal=null;render()},
