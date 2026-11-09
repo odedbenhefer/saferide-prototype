@@ -1,7 +1,7 @@
 {
-  "name": "SafeRide · Soft Sky",
+  "name": "SafeRide",
   "short_name": "SafeRide",
-  "description": "הסעות משותפות לחוגים בעיצוב Soft Sky (design_system_v1020). אבטיפוס עם נתוני דמה.",
+  "description": "הסעות משותפות לחוגים בעיצוב החדש (design_system_v1020). אבטיפוס עם נתוני דמה.",
   "lang": "he",
   "dir": "rtl",
   "start_url": "./",

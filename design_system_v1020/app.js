@@ -1,4 +1,4 @@
-/* SafeRide · Soft Sky (design_system_v1020) — mobile prototype, demo data only. */
+/* SafeRide (design_system_v1020) — mobile prototype, demo data only. */
 (function(){
 'use strict';
 /* ================= icons (line, 24 grid, round caps) ================= */
@@ -137,14 +137,13 @@ function toast(t){
 }
 function go(v){S.view=v;S.modal=null;S.errs={};render()}
 
-/* ================= Soft Sky components ================= */
+/* ================= SafeRide components ================= */
 function Ridi(size,look){
- var dx=look==='left'?-3:look==='right'?3:0;
- return '<svg width="'+size+'" height="'+size+'" viewBox="0 0 72 72" aria-hidden="true">'+
-  '<rect x="10" y="58" width="16" height="12" rx="6" fill="#1E2340"/><rect x="46" y="58" width="16" height="12" rx="6" fill="#1E2340"/>'+
-  '<circle cx="36" cy="34" r="30" fill="var(--ridi)"/>'+
-  '<path d="M18 20a21 21 0 0 1 13-11" fill="none" stroke="#fff" stroke-opacity=".5" stroke-width="3" stroke-linecap="round"/>'+
-  '<circle cx="36" cy="30" r="14" fill="#fff"/><circle cx="'+(37+dx)+'" cy="30" r="7" fill="#1E2340"/><circle cx="'+(39.5+dx)+'" cy="27.5" r="2.2" fill="#fff"/></svg>';
+ var dx=look==='left'?-2:look==='right'?2:0;
+ return '<svg width="'+size+'" height="'+size+'" viewBox="4 9 56 56" aria-hidden="true">'+
+  '<path d="M10 40c0-12 9-24 22-24s22 12 22 24v6a4 4 0 0 1-4 4H14a4 4 0 0 1-4-4z" fill="var(--ridi)"/>'+
+  '<circle cx="32" cy="34" r="10" fill="#fff"/><circle cx="'+(33+dx)+'" cy="35" r="5.5" fill="#1E2340"/><circle cx="'+(35+dx)+'" cy="33" r="1.8" fill="#fff"/>'+
+  '<circle cx="19" cy="50" r="5" fill="#1E2340"/><circle cx="45" cy="50" r="5" fill="#1E2340"/><circle cx="19" cy="50" r="2" fill="#E3E7F2"/><circle cx="45" cy="50" r="2" fill="#E3E7F2"/></svg>';
 }
 function chip(kindName,icon,text,lg){return '<span class="chip '+kindName+(lg?' lg':'')+'">'+(icon?ic(icon):'')+esc(text)+'</span>'}
 var ST={approved:['ok','check','מאושר'],placed:['ok','check','משובץ'],pending:['wait','clock','ממתינה'],missing:['none','minus','חסר'],unplaced:['none','minus','לא משובץ'],rejected:['no','x','נדחתה'],verified:['verified','shield','מאומת על ידי החוג']};
@@ -869,7 +868,7 @@ function modalHtml(){
    '<div class="field"><label for="selClock">'+ic('clock')+'שעון ההדגמה</label><select id="selClock" class="in">'+CLOCKS.map(function(c){return '<option value="'+c.k+'" '+(S.clock===c.k?'selected':'')+'>'+c.label+'</option>'}).join('')+'</select></div>'+
    '<div class="field"><span class="lbl2">מראה</span><div class="seg">'+th.map(function(t){return '<button type="button" aria-pressed="'+(S.theme===t[0])+'"'+da('theme',{v:t[0]})+'>'+t[1]+'</button>'}).join('')+'</div></div>'+
    '<div class="field"><span class="lbl2">'+ic('sparkle')+'תנועה של רידי</span><div class="seg"><button type="button" aria-pressed="'+(S.motion==='auto')+'"'+da('motion',{v:'auto'})+'>לפי המכשיר</button><button type="button" aria-pressed="'+(S.motion==='on')+'"'+da('motion',{v:'on'})+'>תמיד</button></div><p class="cap mut">'+(reducedMotion()?'המכשיר שלך מבקש להפחית תנועה, ולכן ב"לפי המכשיר" רידי לא זז. בחר "תמיד" כדי לראות אותו מתנדנד.':'המכשיר לא מבקש להפחית תנועה, אז רידי אמור לזוז כל 2 שניות.')+'</p></div>'+
-   Btn('איפוס נתוני הדמה',{v:'danger',sm:true,a:'resetDemo'})+Btn('סגירה',{a:'closeModal'})+'<p class="cap mut" style="text-align:center">גרסה 1020.6 · רידי: תנועה לפי המכשיר או תמיד</p>');
+   Btn('איפוס נתוני הדמה',{v:'danger',sm:true,a:'resetDemo'})+Btn('סגירה',{a:'closeModal'})+'<p class="cap mut" style="text-align:center">גרסה 1020.10 · רידי: תנועה לפי המכשיר או תמיד</p>');
  }
  return '';
 }

@@ -1,4 +1,4 @@
-/* SafeRide Soft Sky — design_system_v1020
+/* SafeRide — design_system_v1020
    Tokens and components follow design_system_v1020.md. Light by default, dark via [data-theme="dark"]. */
 :root{
   --ground:#F2F4FA;--sheet:#F7F8FC;--card:#FFFFFF;--line:#E3E7F2;
@@ -6,6 +6,7 @@
   --tint-sky:#B9C7FF;--tint-aqua:#A6E8EE;--tint-blush:#FFD3DE;--tint-lilac:#DCD6FF;--tint-peach:#FFD0B5;
   --row-out:#F3F5FF;--row-back:#FFF5EE;
   --action:#3D5BD9;--action-hover:#2A44B0;--on-action:#FFFFFF;--action-line:#C9D2F2;--action-text:#2E47B8;--focus:#3D5BD9;
+  --brand-safe:#A6E8EE;--brand-ride:#8FAEFF;--brand-header:#3A3368;--on-header:#F4F2FF;--on-header-muted:#DDD9F5;
   --ridi:#FF7A9A;--accent-text:#C92F58;--tab-line:#E5486F;
   --ok-bg:#D7F5E3;--ok-fg:#17663A;--verified-bg:#E6F7EE;
   --wait-bg:#FFF1C7;--wait-fg:#7A5300;--note-bg:#FFF6DA;
@@ -26,6 +27,7 @@
   --tint-sky:#2D3B78;--tint-aqua:#1C4E58;--tint-blush:#5E2A3B;--tint-lilac:#3A3368;--tint-peach:#5A3520;
   --row-out:#232B52;--row-back:#3A2A22;
   --action:#8FA6FF;--action-hover:#B3C2FF;--on-action:#10142B;--action-line:#4A5590;--action-text:#B3C2FF;--focus:#B3C2FF;
+  --brand-safe:#A6E8EE;--brand-ride:#8FAEFF;--brand-header:#3A3368;--on-header:#F4F2FF;--on-header-muted:#DDD9F5;
   --ridi:#FF7A9A;--accent-text:#FF9DB4;--tab-line:#FF7A9A;
   --ok-bg:#173D2A;--ok-fg:#8FE0B0;--verified-bg:#163326;
   --wait-bg:#3D3214;--wait-fg:#F5D47A;--note-bg:#33290F;
@@ -69,7 +71,10 @@ h1,h2,h3,h4,p{margin:0}
 .screen{flex:1;display:flex;flex-direction:column;min-height:0}
 /* colour header */
 .hd{position:relative;padding:calc(env(safe-area-inset-top,0px) + 12px) var(--space-5) 52px;color:var(--ink)}
-.hd.driver{background:var(--tint-sky)}.hd.parent{background:var(--tint-aqua)}.hd.child{background:var(--tint-blush)}.hd.admin{background:var(--tint-lilac)}
+.hd,.hd.driver,.hd.parent,.hd.child,.hd.admin{background:var(--brand-header);color:var(--on-header)}
+.hd .circ,.hd .demo{background:rgba(255,255,255,.18);color:#fff}
+.hd .kick{color:var(--on-header-muted);opacity:1}
+.hd .bubble{background:var(--card);color:var(--ink)}
 .hd.m72{padding-bottom:76px}.hd.m96{padding-bottom:86px}
 .hd-top{display:flex;align-items:center;justify-content:space-between;gap:var(--space-2);min-height:44px;margin-bottom:var(--space-2)}
 .hd-top .sp{width:44px}
@@ -201,8 +206,8 @@ select.in{appearance:none;background-image:linear-gradient(45deg,transparent 50%
 .lrow{display:flex;align-items:center;gap:var(--space-3)}
 /* welcome */
 .welcome{flex:1;display:flex;flex-direction:column;align-items:center;padding:calc(env(safe-area-inset-top,0px) + 40px) var(--space-4) var(--space-8);gap:var(--space-4)}
-.welcome .word{font:800 34px/40px var(--display);color:var(--ink);letter-spacing:-.5px;direction:ltr}
-.welcome .word span{color:var(--action-text)}
+.welcome .word{font:800 34px/40px var(--display);color:var(--brand-safe);letter-spacing:-.5px;direction:ltr}
+.welcome .word span{color:var(--brand-ride)}
 .welcome .who{width:100%;display:flex;flex-direction:column;gap:var(--space-3)}
 .role-card{display:flex;align-items:center;gap:var(--space-3);background:var(--card);border-radius:var(--r-card);box-shadow:var(--shadow-card);padding:var(--space-3) var(--space-4);border:0;width:100%;text-align:right;font:inherit;color:inherit}
 .role-card>.ic{color:var(--ink-muted);width:22px;height:22px}
@@ -235,3 +240,5 @@ select.in{appearance:none;background-image:linear-gradient(45deg,transparent 50%
 .composer .in{flex:1}
 .composer .send{width:52px;height:52px;border-radius:var(--r-btn);border:0;background:var(--action);color:var(--on-action);display:inline-flex;align-items:center;justify-content:center;flex:none}
 .composer .send svg{transform:scaleX(-1)}
+
+.welcome{background:var(--brand-header);color:var(--on-header)}.welcome .sub,.welcome .lead,.welcome p{color:var(--on-header-muted)}.welcome .role-card,.welcome .role-card p{color:var(--ink)}

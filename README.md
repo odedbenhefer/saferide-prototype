@@ -1,6 +1,6 @@
 # SafeRide: אבטיפוס פרונט אנד (נתוני דמה) · v2
 
-> **חדש:** גרסת מובייל בעיצוב Soft Sky, בתיקייה [`design_system_v1020/`](design_system_v1020/README.md). האתר: https://odedbenhefer.github.io/saferide-prototype/design_system_v1020/
+> **חדש:** גרסת מובייל בעיצוב החדש, בתיקייה [`design_system_v1020/`](design_system_v1020/README.md). האתר: https://odedbenhefer.github.io/saferide-prototype/design_system_v1020/
 
 `index.html` ותיקיית `assets/` עם האיורים (SVG), בלי שרת, בלי התקנה ובלי מפתחות. כל הנתונים בזיכרון הדפדפן, וכל רענון מאפס אותם. חשוב להשאיר את `assets/` ליד `index.html`, אחרת האיורים לא יוצגו.
 
